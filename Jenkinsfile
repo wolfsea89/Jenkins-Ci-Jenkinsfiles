@@ -15,7 +15,7 @@ pipeline {
     skipDefaultCheckout true
   }
   environment {
-    jenkinsfile_directory = ".jenkins/"
+    jenkinsfile_directory = ".jenkins"
   }
   stages {
     stage('Gathering Fact') {
