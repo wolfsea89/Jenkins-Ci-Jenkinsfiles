@@ -33,7 +33,10 @@ pipeline {
           gitcheckout.jenkinsSripts(jenkinsScripts_directory ,gitCredentialId)
           
           facts['applicationConfiguration'] = gatheringFact.applicationConfiguration(env.WORKSPACE + '/' + applicationConfigurationInProjectJsonPath)
+          currentBuild.displayName = "#${env.BUILD_NUMBER} - ${facts.branchName} - ${facts.version.semanticVersionWithBuildNumber}"
+          // currentBuild.description = "$yourdescriptionvariable-$another"
           env.facts = facts
+
         }
       }
       post {
