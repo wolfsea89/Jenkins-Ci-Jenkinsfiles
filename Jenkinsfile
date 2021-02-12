@@ -48,6 +48,11 @@ pipeline {
       }
       steps{
         script{
+          if(facts.applicationConfiguration.DOCKER_PROJECT){
+            println 'ok'
+          } else {
+            println 'not ok'
+          }
           println(facts)
         }
       }
