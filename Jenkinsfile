@@ -46,6 +46,9 @@ pipeline {
       agent {
         label 'slave_ci_build'
       }
+      when{
+        facts.applicationConfiguration.DOCKER_PROJECT
+      }
       steps{
         script{
           if(facts.applicationConfiguration.DOCKER_PROJECT){
