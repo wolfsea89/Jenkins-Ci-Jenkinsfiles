@@ -41,6 +41,8 @@ pipeline {
         }
       }
     }
+  }
+  stages {
     stage('Docker build'){
       agent {
         label 'slave_ci_build'
