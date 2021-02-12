@@ -17,7 +17,7 @@ pipeline {
   environment {
     jenkinsScripts_directory = '.jenkins'
     gitCredentialId = 'github'
-    applicationConfigurationInProjectJsonPath = 'configuration/env.json'
+    String applicationConfigurationInProjectJsonPath = 'configuration/env.json'
   }
   stages {
     stage('Preparing to work') {
