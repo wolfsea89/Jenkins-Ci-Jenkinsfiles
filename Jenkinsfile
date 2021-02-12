@@ -20,40 +20,38 @@ pipeline {
     applicationConfigurationInProjectJsonPath = 'configuration/env.json'
   }
   stages {
-    stage('Preparing to work') {
+    stage('Continuous Integration') {
       agent {
         label 'slave_ci_build'
       }
-      steps {
-        script {
-          deleteDir()
-          facts = gatheringFact(params, env)
-          
-          gitcheckout.application(facts.branchName, facts.repositoryUrl, gitCredentialId)
-          gitcheckout.jenkinsSripts(jenkinsScripts_directory ,gitCredentialId)
-          
-          facts['applicationConfiguration'] = gatheringFact.applicationConfiguration(env.WORKSPACE + '/' + applicationConfigurationInProjectJsonPath)
-          currentBuild.displayName = "#${env.BUILD_NUMBER} - ${facts.branchName} - ${facts.version.semanticVersionWithBuildNumber}"
-          env.facts = facts
+      stages {
+        stage('Preparing to work') {
+          steps {
+            script {
+              deleteDir()
+              facts = gatheringFact(params, env)
+              
+              gitcheckout.application(facts.branchName, facts.repositoryUrl, gitCredentialId)
+              gitcheckout.jenkinsSripts(jenkinsScripts_directory ,gitCredentialId)
+              
+              facts['applicationConfiguration'] = gatheringFact.applicationConfiguration(env.WORKSPACE + '/' + applicationConfigurationInProjectJsonPath)
+              currentBuild.displayName = "#${env.BUILD_NUMBER} - ${facts.branchName} - ${facts.version.semanticVersionWithBuildNumber}"
+              env.facts = facts
 
-        }
-      }
-    }
-    stage('Docker build'){
-      agent {
-        label 'slave_ci_build'
-      }
-      options {
-        skipDefaultCheckout true
-      }
-      when{
-        expression {
-          facts.applicationConfiguration.DOCKER_PROJECTS ? true : false
-        }
-      }
-      steps{
-        script{
-          dockerCi.buildProjects(facts.applicationConfiguration.DOCKER_PROJECTS,facts.version.semanticVersionWithBuildNumber)
+            }
+          }
+          stage('Docker build'){
+            when{
+              expression {
+                facts.applicationConfiguration.DOCKER_PROJECTS ? true : false
+              }
+            }
+            steps{
+              script{
+                dockerCi.buildProjects(facts.applicationConfiguration.DOCKER_PROJECTS,facts.version.semanticVersionWithBuildNumber)
+              }
+            }
+          }
         }
       }
     }
