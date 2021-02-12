@@ -71,8 +71,7 @@ println(env.GIT_COMMITTER_NAME)
 println(env.GIT_AUTHOR_NAME)
 println(env.GIT_COMMITTER_EMAIL)
 println(env.GIT_AUTHOR_EMAIL)
-"""
-          
+         
         }
       }
     }
