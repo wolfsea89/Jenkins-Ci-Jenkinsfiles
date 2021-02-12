@@ -30,7 +30,7 @@ pipeline {
           def gatheringFact = gatheringFact(params, env)
           gitcheckout.application(gatheringFact.branchName, gatheringFact.repositoryUrl, gitCredentialId)
           gitcheckout.jenkinsSripts(jenkinsScripts_directory ,gitCredentialId)
-          def gatheringFact['applicationConfiguration']= gatheringFact.applicationConfiguration(applicationConfigurationInProjectJsonPath)
+          gatheringFact['applicationConfiguration'] = gatheringFact.applicationConfiguration(applicationConfigurationInProjectJsonPath)
           println(gatheringFact)
          
         }
