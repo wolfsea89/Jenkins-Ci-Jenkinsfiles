@@ -48,17 +48,12 @@ pipeline {
       }
       when{
         expression {
-          facts.applicationConfiguration.DOCKER_PROJECT ? true : false
+          facts.applicationConfiguration.DOCKER_PROJECTS ? true : false
         }
       }
       steps{
         script{
-          if(facts.applicationConfiguration.DOCKER_PROJECT){
-            println 'ok'
-          } else {
-            println 'not ok'
-          }
-          println(facts)
+          println(facts.applicationConfiguration.DOCKER_PROJECTS )
         }
       }
     }
