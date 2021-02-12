@@ -48,7 +48,7 @@ pipeline {
       steps{
         script{
           println(env.facts)
-        }
+        }        
       }
     }
   }
