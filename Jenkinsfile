@@ -13,6 +13,9 @@ pipeline {
   agent {
     label 'slave_ci_build'
   }
+  options {
+    skipDefaultCheckout true
+  }
   stages {
     stage('Gathering Fact') {
       steps {        
@@ -22,7 +25,11 @@ pipeline {
                   env
               ])
           git branch: gatheringFact.branchName, url: gatheringFact.repositoryUrl
-          
+          checkout([
+            $class: 'GitSCM',
+            branches: [[name: gatheringFact.branchName]],
+            userRemoteConfigs: [[url: gatheringFact.repositoryUrl]]
+          ])
           pring(gatheringFact)
           sh ( 'ls -la')
         }
