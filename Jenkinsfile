@@ -17,6 +17,7 @@ pipeline {
   environment {
     jenkinsScripts_directory = '.jenkins'
     gitCredentialId = 'github'
+    applicationConfigurationInProjectJsonPath = 'configuration/env.json'
   }
   stages {
     stage('Preparing to work') {
@@ -28,11 +29,9 @@ pipeline {
           deleteDir()
           def gatheringFact = gatheringFact(params, env)
           gitcheckout.application(gatheringFact.branchName, gatheringFact.repositoryUrl, gitCredentialId)
-          
           gitcheckout.jenkinsSripts(jenkinsScripts_directory ,gitCredentialId)
-          
-
-
+          def gatheringFact += gatheringFact.applicationConfiguration(applicationConfigurationInProjectJsonPath)
+          println(gatheringFact)
          
         }
       }
