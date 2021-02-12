@@ -32,7 +32,7 @@ pipeline {
           gitcheckout.application(facts.branchName, facts.repositoryUrl, gitCredentialId)
           gitcheckout.jenkinsSripts(jenkinsScripts_directory ,gitCredentialId)
           
-          facts['applicationConfiguration'] = gatheringFact.applicationConfiguration(applicationConfigurationInProjectJsonPath.toString())
+          facts['applicationConfiguration'] = gatheringFact.applicationConfiguration(env.WORKSPACE + '/' + applicationConfigurationInProjectJsonPath)
           println(facts)
          
         }
