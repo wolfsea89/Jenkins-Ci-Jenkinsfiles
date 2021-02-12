@@ -42,6 +42,9 @@ pipeline {
           }
         }
         stage('Docker build'){
+          options {
+            skipDefaultCheckout true
+          }
           when{
             expression {
               facts.applicationConfiguration.DOCKER_PROJECTS ? true : false
