@@ -27,8 +27,9 @@ pipeline {
         script {
           def gatheringFact = gatheringFact(params, env)
           gitcheckout.application(gatheringFact.branchName, gatheringFact.repositoryUrl, gitCredentialId)
-          gitcheckout.jenkinsSripts(gitCredentialId,jenkinsScripts_directory)
           debug()
+          gitcheckout.jenkinsSripts(jenkinsScripts_directory ,gitCredentialId)
+          
 
 
          
