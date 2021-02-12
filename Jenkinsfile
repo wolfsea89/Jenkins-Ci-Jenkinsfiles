@@ -27,16 +27,17 @@ pipeline {
       steps {
         script {
           deleteDir()
-          env.facts = gatheringFact(params, env)
+          facts = gatheringFact(params, env)
           
-          gitcheckout.application(env.facts.branchName, env.facts.repositoryUrl, gitCredentialId)
+          gitcheckout.application(facts.branchName, facts.repositoryUrl, gitCredentialId)
           gitcheckout.jenkinsSripts(jenkinsScripts_directory ,gitCredentialId)
           
-          env.facts['applicationConfiguration'] = gatheringFact.applicationConfiguration(env.WORKSPACE + '/' + applicationConfigurationInProjectJsonPath)
-          post{
-            always {
-              deleteDir()
-            }
+          facts['applicationConfiguration'] = gatheringFact.applicationConfiguration(env.WORKSPACE + '/' + applicationConfigurationInProjectJsonPath)
+        }
+        post {
+          always {
+            env.facts = facts.to
+            deleteDir()
           }
         }
       }
@@ -47,8 +48,8 @@ pipeline {
       }
       steps{
         script{
-          println(env.facts)
-        }        
+          println(facts)
+        }
       }
     }
   }
