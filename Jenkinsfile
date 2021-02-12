@@ -19,7 +19,7 @@ pipeline {
         agent {
           label 'slave_ci_build'
         }
-      steps {        
+      steps {
         script {
           def gatheringFact = gatheringFact([
                   params,
@@ -29,7 +29,12 @@ pipeline {
           checkout([
             $class: 'GitSCM',
             branches: [[name: gatheringFact.branchName]],
-            userRemoteConfigs: [[url: gatheringFact.repositoryUrl]],
+            userRemoteConfigs: [
+              [
+                url: gatheringFact.repositoryUrl,
+                credentialsId: 'github'
+              ]
+            ],
           ])
           pring(gatheringFact)
           
