@@ -35,10 +35,10 @@ pipeline {
           facts['applicationConfiguration'] = gatheringFact.applicationConfiguration(env.WORKSPACE + '/' + applicationConfigurationInProjectJsonPath)
           env.facts = facts
         }
-        post {
-          always {
-            deleteDir()
-          }
+      }
+      post {
+        always {
+          deleteDir()
         }
       }
     }
