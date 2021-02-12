@@ -29,22 +29,22 @@ pipeline {
                   env
               ])
           sh ( 'ls -la')
-          checkout([
-            $class: 'GitSCM',
-            branches: [[name: gatheringFact.branchName]],
-            userRemoteConfigs: [
-              [
-                url: gatheringFact.repositoryUrl,
-                credentialsId: 'github'
-              ]
-            ],
-            extensions: [
-              [
-                $class: 'RelativeTargetDirectory', 
-                relativeTargetDir: jenkinsfile_directory
-              ]
-            ], 
-          ])
+          // checkout([
+          //   $class: 'GitSCM',
+          //   branches: [[name: gatheringFact.branchName]],
+          //   userRemoteConfigs: [
+          //     [
+          //       url: gatheringFact.repositoryUrl,
+          //       credentialsId: 'github'
+          //     ]
+          //   ],
+          //   extensions: [
+          //     [
+          //       $class: 'RelativeTargetDirectory', 
+          //       relativeTargetDir: jenkinsfile_directory
+          //     ]
+          //   ], 
+          // ])
           println(gatheringFact)
           
         }
