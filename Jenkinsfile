@@ -28,7 +28,8 @@ pipeline {
           checkout([
             $class: 'GitSCM',
             branches: [[name: gatheringFact.branchName]],
-            userRemoteConfigs: [[url: gatheringFact.repositoryUrl]]
+            userRemoteConfigs: [[url: gatheringFact.repositoryUrl]],
+            credentialsId: 'github'
           ])
           pring(gatheringFact)
           sh ( 'ls -la')
