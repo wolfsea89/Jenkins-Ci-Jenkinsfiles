@@ -15,36 +15,20 @@ pipeline {
     skipDefaultCheckout true
   }
   environment {
-    jenkinsfile_directory = ".jenkins"
+    jenkinsfile_directory = '.jenkins'
+    gitCredentialId = 'github'
   }
   stages {
-    stage('Gathering Fact') {
+    stage('Preparing to work') {
         agent {
           label 'slave_ci_build'
         }
       steps {
         script {
-          def gatheringFact = gatheringFact([
-                  params,
-                  env
-              ])
+          def gatheringFact = gatheringFact(params, env)
+          gitcheckout(gatheringFact.branchName, gatheringFact.repositoryUrl, gitCredentialId)
           sh ( 'ls -la')
-          // checkout([
-          //   $class: 'GitSCM',
-          //   branches: [[name: gatheringFact.branchName]],
-          //   userRemoteConfigs: [
-          //     [
-          //       url: gatheringFact.repositoryUrl,
-          //       credentialsId: 'github'
-          //     ]
-          //   ],
-          //   extensions: [
-          //     [
-          //       $class: 'RelativeTargetDirectory', 
-          //       relativeTargetDir: jenkinsfile_directory
-          //     ]
-          //   ], 
-          // ])
+          
           println(gatheringFact)
           
         }
