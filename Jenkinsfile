@@ -25,9 +25,10 @@ pipeline {
         }
       steps {
         script {
+          deleteDir()
           def gatheringFact = gatheringFact(params, env)
           gitcheckout.application(gatheringFact.branchName, gatheringFact.repositoryUrl, gitCredentialId)
-          debug()
+          
           gitcheckout.jenkinsSripts(jenkinsScripts_directory ,gitCredentialId)
           
 
