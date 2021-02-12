@@ -14,7 +14,7 @@ pipeline {
     label 'slave_ci_build'
   }
   options {
-    skipDefaultCheckout true
+    skipDefaultCheckout()
   }
   stages {
     stage('Gathering Fact') {
