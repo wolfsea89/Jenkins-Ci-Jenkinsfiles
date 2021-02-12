@@ -33,10 +33,10 @@ pipeline {
           gitcheckout.jenkinsSripts(jenkinsScripts_directory ,gitCredentialId)
           
           facts['applicationConfiguration'] = gatheringFact.applicationConfiguration(env.WORKSPACE + '/' + applicationConfigurationInProjectJsonPath)
+          env.facts = facts
         }
         post {
           always {
-            env.facts = facts
             deleteDir()
           }
         }
