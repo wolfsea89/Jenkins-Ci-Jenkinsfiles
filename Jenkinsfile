@@ -16,6 +16,9 @@ pipeline {
   options {
     skipDefaultCheckout()
   }
+  dir('subDir') {
+    checkout scm
+}
   stages {
     stage('Gathering Fact') {
       steps {        
