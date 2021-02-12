@@ -34,7 +34,7 @@ pipeline {
           
           facts['applicationConfiguration'] = gatheringFact.applicationConfiguration(env.WORKSPACE + '/' + applicationConfigurationInProjectJsonPath)
           currentBuild.displayName = "#${env.BUILD_NUMBER} - ${facts.branchName} - ${facts.version.semanticVersionWithBuildNumber}"
-          currentBuild.description = facts
+          currentBuild.description = "${facts}"
           env.facts = facts
 
         }
