@@ -24,7 +24,7 @@ pipeline {
                   params,
                   env
               ])
-          git branch: gatheringFact.branchName, url: gatheringFact.repositoryUrl
+          sh ( 'ls -la')
           checkout([
             $class: 'GitSCM',
             branches: [[name: gatheringFact.branchName]],
@@ -32,7 +32,7 @@ pipeline {
             credentialsId: 'github'
           ])
           pring(gatheringFact)
-          sh ( 'ls -la')
+          
         }
       }
     }
