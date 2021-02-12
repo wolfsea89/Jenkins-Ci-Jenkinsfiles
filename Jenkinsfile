@@ -21,7 +21,7 @@ pipeline {
                   params,
                   env
               ])
-          // pring(a)
+          pring(a)
         }
       }
     }
