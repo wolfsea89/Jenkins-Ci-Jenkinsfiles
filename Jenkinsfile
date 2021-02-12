@@ -10,19 +10,17 @@ pipeline {
     string(name: 'repositoryUrl', defaultValue: 'git@github.com:wolfsea89/Jenkins-BaseImage.git', description: 'Repository URL (git/https)')
     string(name: 'manualVersion', defaultValue: '', description: 'Set manual version (X.Y.Z). Worked with branch release, hotfix, master without version')
   }
-  agent {
-    label 'slave_ci_build'
-  }
+  agent none
   options {
-    skipDefaultCheckout()
+    skipDefaultCheckout true
   }
   stages {
     stage('Gathering Fact') {
+        agent {
+          label 'slave_ci_build'
+        }
       steps {        
         script {
-          dir('subDir') {
-               checkout scm
-          }
           def gatheringFact = gatheringFact([
                   params,
                   env
