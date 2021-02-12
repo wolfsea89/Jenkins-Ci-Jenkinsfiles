@@ -21,9 +21,9 @@ pipeline {
   }
   stages {
     stage('Preparing to work') {
-        agent {
-          label 'slave_ci_build'
-        }
+      agent {
+        label 'slave_ci_build'
+      }
       steps {
         script {
           deleteDir()
@@ -32,11 +32,17 @@ pipeline {
           gitcheckout.application(facts.branchName, facts.repositoryUrl, gitCredentialId)
           gitcheckout.jenkinsSripts(jenkinsScripts_directory ,gitCredentialId)
           
-          def a = readJSON file: applicationConfigurationInProjectJsonPath
-          println(a)
           facts['applicationConfiguration'] = gatheringFact.applicationConfiguration(env.WORKSPACE + '/' + applicationConfigurationInProjectJsonPath)
+        }
+      }
+    }
+    stage('Docker build'){
+      agent {
+        label 'slave_ci_build'
+      }
+      steps{
+        script{
           println(facts)
-         
         }
       }
     }
