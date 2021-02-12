@@ -47,7 +47,9 @@ pipeline {
         label 'slave_ci_build'
       }
       when{
-        facts.applicationConfiguration.DOCKER_PROJECT ? true : false
+        expression {
+          facts.applicationConfiguration.DOCKER_PROJECT ? true : false
+        }
       }
       steps{
         script{
