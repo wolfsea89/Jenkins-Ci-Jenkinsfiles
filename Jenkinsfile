@@ -38,11 +38,6 @@ pipeline {
 
         }
       }
-      post {
-        always {
-          deleteDir()
-        }
-      }
     }
     stage('Docker build'){
       agent {
