@@ -27,12 +27,12 @@ pipeline {
       steps {
         script {
           deleteDir()
-          def gatheringFact = gatheringFact(params, env)
-          gitcheckout.application(gatheringFact.branchName, gatheringFact.repositoryUrl, gitCredentialId)
-          println(applicationConfigurationInProjectJsonPath.getClass())
+          def facts = gatheringFact(params, env)
+          gitcheckout.application(facts.branchName, facts.repositoryUrl, gitCredentialId)
           gitcheckout.jenkinsSripts(jenkinsScripts_directory ,gitCredentialId)
-          gatheringFact['applicationConfiguration'] = gatheringFact.applicationConfiguration(applicationConfigurationInProjectJsonPath.toString())
-          println(gatheringFact)
+          println(applicationConfigurationInProjectJsonPath.getClass())
+          facts['applicationConfiguration'] = gatheringFact.applicationConfiguration(applicationConfigurationInProjectJsonPath.toString())
+          println(facts)
          
         }
       }
