@@ -26,10 +26,10 @@ pipeline {
       steps {
         script {
           def gatheringFact = gatheringFact(params, env)
-          gitcheckout(gatheringFact.branchName, gatheringFact.repositoryUrl, gitCredentialId)
-          sh ( 'ls -la')
+          gitcheckout.application(gatheringFact.branchName, gatheringFact.repositoryUrl, gitCredentialId)
+          gitcheckout.application(gatheringFact.branchName, gatheringFact.repositoryUrl, gitCredentialId)
           
-          println(gatheringFact)
+          println(env)
           
         }
       }
