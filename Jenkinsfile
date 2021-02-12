@@ -16,13 +16,13 @@ pipeline {
   options {
     skipDefaultCheckout()
   }
-  dir('subDir') {
-    checkout scm
-}
   stages {
     stage('Gathering Fact') {
       steps {        
         script {
+          dir('subDir') {
+               checkout scm
+          }
           def gatheringFact = gatheringFact([
                   params,
                   env
