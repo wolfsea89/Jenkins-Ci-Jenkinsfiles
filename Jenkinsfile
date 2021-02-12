@@ -34,7 +34,6 @@ pipeline {
           
           facts['applicationConfiguration'] = gatheringFact.applicationConfiguration(env.WORKSPACE + '/' + applicationConfigurationInProjectJsonPath)
           currentBuild.displayName = "#${env.BUILD_NUMBER} - ${facts.branchName} - ${facts.version.semanticVersionWithBuildNumber}"
-          printJobDescriptions(facts)
           env.facts = facts
 
         }
@@ -56,7 +55,7 @@ pipeline {
       }
       steps{
         script{
-          println(facts.applicationConfiguration.DOCKER_PROJECTS )
+          docker.buildProjects(facts.applicationConfiguration.DOCKER_PROJECTS)
         }
       }
     }
