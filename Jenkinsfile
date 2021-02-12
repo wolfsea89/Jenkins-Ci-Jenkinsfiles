@@ -19,7 +19,7 @@ pipeline {
     gitCredentialId = 'github'
     applicationConfigurationInProjectJsonPath = 'configuration/env.json'
   }
-  stages {
+  stages{
     stage('Continuous Integration') {
       agent {
         label 'slave_ci_build'
@@ -40,16 +40,16 @@ pipeline {
 
             }
           }
-          stage('Docker build'){
-            when{
-              expression {
-                facts.applicationConfiguration.DOCKER_PROJECTS ? true : false
-              }
+        }
+        stage('Docker build'){
+          when{
+            expression {
+              facts.applicationConfiguration.DOCKER_PROJECTS ? true : false
             }
-            steps{
-              script{
-                dockerCi.buildProjects(facts.applicationConfiguration.DOCKER_PROJECTS,facts.version.semanticVersionWithBuildNumber)
-              }
+          }
+          steps{
+            script{
+              dockerCi.buildProjects(facts.applicationConfiguration.DOCKER_PROJECTS,facts.version.semanticVersionWithBuildNumber)
             }
           }
         }
