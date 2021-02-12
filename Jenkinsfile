@@ -36,7 +36,7 @@ pipeline {
         }
         post {
           always {
-            env.facts = facts.to
+            env.facts = facts
             deleteDir()
           }
         }
