@@ -17,7 +17,7 @@ pipeline {
   environment {
     jenkinsScripts_directory = '.jenkins'
     gitCredentialId = 'github'
-    String applicationConfigurationInProjectJsonPath = 'configuration/env.json'
+    applicationConfigurationInProjectJsonPath = 'configuration/env.json'
   }
   stages {
     stage('Preparing to work') {
@@ -30,7 +30,7 @@ pipeline {
           def gatheringFact = gatheringFact(params, env)
           gitcheckout.application(gatheringFact.branchName, gatheringFact.repositoryUrl, gitCredentialId)
           gitcheckout.jenkinsSripts(jenkinsScripts_directory ,gitCredentialId)
-          gatheringFact['applicationConfiguration'] = gatheringFact.applicationConfiguration(applicationConfigurationInProjectJsonPath)
+          gatheringFact['applicationConfiguration'] = gatheringFact.applicationConfiguration(applicationConfigurationInProjectJsonPath.toString())
           println(gatheringFact)
          
         }
