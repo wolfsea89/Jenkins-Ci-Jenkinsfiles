@@ -14,6 +14,9 @@ pipeline {
   options {
     skipDefaultCheckout true
   }
+  environment {
+    jenkinsfile_directory = ".jenkins/"
+  }
   stages {
     stage('Gathering Fact') {
         agent {
@@ -35,8 +38,14 @@ pipeline {
                 credentialsId: 'github'
               ]
             ],
+            extensions: [
+              [
+                $class: 'RelativeTargetDirectory', 
+                relativeTargetDir: jenkinsfile_directory
+              ]
+            ], 
           ])
-          pring(gatheringFact)
+          println(gatheringFact)
           
         }
       }
