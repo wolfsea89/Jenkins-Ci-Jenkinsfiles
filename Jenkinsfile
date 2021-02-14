@@ -19,6 +19,7 @@ pipeline {
     gitCredentialId = 'github'
     applicationConfigurationInProjectJsonPath = 'configuration/jenkins.json'
     baseImage_services_Admin_credentialId = 'baseImage_services_AminPassword'
+    dockerRepository_credentialId = 'docker_hub'
   }
   stages{
     stage('Continuous Integration') {
@@ -74,7 +75,7 @@ pipeline {
               steps{
                 script{
                   println("rekease")
-                  // dockerCi.buildProjects(facts.applicationConfiguration.DOCKER_PROJECTS,facts.version.semanticVersionWithBuildNumber)
+                  // dockerCi.publishBaseImage(facts.applicationConfiguration.DOCKER_PROJECTS,facts.version.semanticVersionWithBuildNumber, dockerRepository_credentialId)
                 }
               }
             }
