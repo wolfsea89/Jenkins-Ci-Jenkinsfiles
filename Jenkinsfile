@@ -20,9 +20,9 @@ pipeline {
     APP_CONFIGURATION_JSON_PATH = 'configuration/jenkins.json'
     BASEIMAGE_SERVICES_ADMIN_CREDS_ID = 'baseImage_services_AminPassword'
     DOCKER_REPOSITORY_CREDS_ID = 'docker_hub'
-    DOCKER_REPOSITORY_URL = 'https://index.docker.io/v1/'
-    DOCKER_REPOSITORY_SNAPSHOT_NAME = 'wolfsea89/jenkins_master_snapshot'
-    DOCKER_REPOSITORY_RELEASE_NAME = 'wolfsea89/jenkins_master'
+    DOCKER_REPOSITORY_URL = 'https://index.docker.io/v1'
+    DOCKER_REPOSITORY_SNAPSHOT_NAME = 'wolfsea89/${projectName}_snapshot'
+    DOCKER_REPOSITORY_RELEASE_NAME = 'wolfsea89/${projectName}'
   }
   stages{
     stage('Continuous Integration') {
