@@ -92,7 +92,6 @@ pipeline {
               }
               steps{
                 script{
-                  println("snapshot")
                   publishBaseImage(facts.applicationConfiguration.DOCKER_PROJECTS, facts.version, env.REPOSITORY_URL, env.REPOSITORY_SNAPSHOT_NAME, DOCKER_REPOSITORY_CREDS_ID)
                 }
               }
