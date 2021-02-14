@@ -65,18 +65,22 @@ pipeline {
             }
           }
         }
-        stage('Docker build'){
-          when{
-            expression {
-              facts.applicationConfiguration.DOCKER_PROJECTS ? true : false
-            }
-          }
-          steps{
-            script{
-              dockerCi.buildProjects(
-                facts.applicationConfiguration.DOCKER_PROJECTS,
-                facts.version.semanticVersionWithBuildNumber
-              )
+        stage('Build'){
+          parallel {
+            stage('Docker'){
+              when{
+                expression {
+                  facts.applicationConfiguration.DOCKER_PROJECTS ? true : false
+                }
+              }
+              steps{
+                script{
+                  dockerCi.buildProjects(
+                    facts.applicationConfiguration.DOCKER_PROJECTS,
+                    facts.version.semanticVersionWithBuildNumber
+                  )
+                }
+              }
             }
           }
         }
