@@ -36,7 +36,7 @@ pipeline {
               deleteDir()
               facts = gatheringFact(params, env)
               
-              gitcheckout.application(facts.branchName, facts.repositoryUrl, GIT_CREDS_ID)
+              gitcheckout.application(facts.branchName, facts.repositoryUrl, env.GIT_CREDS_ID)
               gitcheckout.jenkinsSripts(JENKINSFILE_SCRIPTS_DIR)
               
               facts['applicationConfiguration'] = gatheringFact.applicationConfiguration(env.WORKSPACE + '/' + APP_CONFIGURATION_JSON_PATH)
@@ -50,7 +50,7 @@ pipeline {
           steps{
             script{
               prebuildScripts.setVersion(facts)
-              prebuildScripts.setCredentials(facts, BASEIMAGE_SERVICES_ADMIN_CREDS_ID)
+              prebuildScripts.setCredentials(facts, env.BASEIMAGE_SERVICES_ADMIN_CREDS_ID)
               prebuildScripts.setJenkinsJobInfo(facts)
             }
           }
