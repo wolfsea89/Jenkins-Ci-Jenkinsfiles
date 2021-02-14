@@ -100,8 +100,13 @@ pipeline {
                         facts.applicationConfiguration.DOCKER_PROJECTS,
                         facts.version.semanticVersionWithBuildNumber,
                         env.DOCKER_REPOSITORY_URL,
-                        env.DOCKER_REPOSITORY_SNAPSHOT_NAME,
+                        env.DOCKER_REPOSITORY_RELASE_NAME,
                         env.DOCKER_REPOSITORY_CREDS_ID
+                      )
+                      dockerCi.cleanAfterBuild(
+                        facts.applicationConfiguration.DOCKER_PROJECTS,
+                        facts.version.semanticVersionWithBuildNumber,
+                        env.DOCKER_REPOSITORY_RELASE_NAME,
                       )
                     }
                   }
@@ -124,6 +129,7 @@ pipeline {
                       dockerCi.cleanAfterBuild(
                         facts.applicationConfiguration.DOCKER_PROJECTS,
                         facts.version.semanticVersionWithBuildNumber,
+                        env.DOCKER_REPOSITORY_SNAPSHOT_NAME,
                       )
                     }
                   }
