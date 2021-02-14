@@ -59,18 +59,16 @@ pipeline {
           steps{
             script{
               dockerCi.buildProjects(facts.applicationConfiguration.DOCKER_PROJECTS,facts.version.semanticVersionWithBuildNumber)
+              println(facts.artifactType)
             }
           }
         }
         stage('Docker publish') {
           parallel {
-            stage('Docker publish - release'){
-              options {
-                skipDefaultCheckout true
-              }
+            stage('Release'){
               when{
                 expression {
-                  facts.branchPrefix == "release" ? true : false
+                  facts.artifactType == "release" ? true : false
                 }
               }
               steps{
@@ -80,13 +78,11 @@ pipeline {
                 }
               }
             }
-            stage('Docker publish - snapshot'){
-              options {
-                skipDefaultCheckout true
-              }
+            stage('Snapshot'){
+
               when{
                 expression {
-                  facts.branchPrefix == "snapshot" ? true : false
+                  facts.artifactType == "snapshot" ? true : false
                 }
               }
               steps{
