@@ -43,8 +43,8 @@ pipeline {
         stage('Prebuild Scripts') {
           steps{
             script{
-              prebuildScripts.setVersion(env.facts)
-              prebuildScripts.setCreedentials(env.facts)
+              prebuildScripts.setVersion(facts)
+              prebuildScripts.setCreedentials(facts)
             }
           }
         }
