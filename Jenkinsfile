@@ -46,6 +46,7 @@ pipeline {
             script{
               prebuildScripts.setVersion(facts)
               prebuildScripts.setCreedentials(facts, baseImage_services_Admin_credentialId)
+              prebuildScripts.setJenkinsJobParams(facts)
             }
           }
         }
