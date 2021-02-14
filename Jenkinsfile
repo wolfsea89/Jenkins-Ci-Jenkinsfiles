@@ -78,7 +78,7 @@ pipeline {
               steps{
                 script{
                   println("rekease")
-                  publishBaseImage(facts.applicationConfiguration.DOCKER_PROJECTS, facts.version, env.DOCKER_REPOSITORY_URL, env.DOCKER_REPOSITORY_SNAPSHOT_NAME, DOCKER_REPOSITORY_CREDS_ID)
+                  publishBaseImage(facts.applicationConfiguration.DOCKER_PROJECTS, facts.version, env.DOCKER_REPOSITORY_URL, env.DOCKER_REPOSITORY_RELEASE_NAME, DOCKER_REPOSITORY_CREDS_ID)
                 }
               }
             }
