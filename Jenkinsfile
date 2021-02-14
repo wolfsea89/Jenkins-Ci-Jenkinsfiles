@@ -63,11 +63,10 @@ pipeline {
           }
           steps{
             script{
-              def dockerImages = dockerCi.buildProjects(
+              env.dockerImages = dockerCi.buildProjects(
                 facts.applicationConfiguration.DOCKER_PROJECTS,
                 facts.version.semanticVersionWithBuildNumber
               )
-              println(dockerImages)
             }
           }
         }
@@ -113,11 +112,12 @@ pipeline {
           }
         }
       }
-      // post {
-      //   always {
-      //     deleteDir() /* clean up our workspace */
-      //   }
-      // }
+      post {
+        always {
+          println(dockerImages)
+          deleteDir() /* clean up our workspace */
+        }
+      }
     }
   }
 }
