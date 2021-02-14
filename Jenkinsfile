@@ -62,21 +62,41 @@ pipeline {
             }
           }
         }
-        stage('Docker publish'){
-          options {
-            skipDefaultCheckout true
-          }
-          when{
-            expression {
-              facts.branchPrefix == "release" ? true : false
+        stage('Docker publish') {
+          parallel {
+            stage('Docker publish - release'){
+              options {
+                skipDefaultCheckout true
+              }
+              when{
+                expression {
+                  facts.branchPrefix == "release" ? true : false
+                }
+              }
+              steps{
+                script{
+                  println("rekease")
+                  // dockerCi.buildProjects(facts.applicationConfiguration.DOCKER_PROJECTS,facts.version.semanticVersionWithBuildNumber)
+                }
+              }
+            }
+            stage('Docker publish - snapshot'){
+              options {
+                skipDefaultCheckout true
+              }
+              when{
+                expression {
+                  facts.branchPrefix == "snapshot" ? true : false
+                }
+              }
+              steps{
+                script{
+                  println("snapshot")
+                  // dockerCi.buildProjects(facts.applicationConfiguration.DOCKER_PROJECTS,facts.version.semanticVersionWithBuildNumber)
+                }
+              }
             }
           }
-          steps{
-            script{
-              dockerCi.buildProjects(facts.applicationConfiguration.DOCKER_PROJECTS,facts.version.semanticVersionWithBuildNumber)
-            }
-          }
-        }
       }
       // post {
       //   always {
