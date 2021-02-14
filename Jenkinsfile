@@ -30,6 +30,7 @@ pipeline {
         stage('Preparing to work') {
           steps {
             script {
+              deleteDir()
               facts = gatheringFact(params, env)
               
               gitcheckout.application(facts.branchName, facts.repositoryUrl, gitCredentialId)
