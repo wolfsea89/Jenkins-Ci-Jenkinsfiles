@@ -78,7 +78,7 @@ pipeline {
               steps{
                 script{
                   println("rekease")
-                  dockerCi.publishBaseImage(facts.applicationConfiguration.DOCKER_PROJECTS,facts.version.semanticVersionWithBuildNumber, DOCKER_REPOSITORY_CREDS_ID)
+                  publishBaseImage(facts.applicationConfiguration.DOCKER_PROJECTS, facts.version, env.DOCKER_REPOSITORY_URL, env.DOCKER_REPOSITORY_SNAPSHOT_NAME, DOCKER_REPOSITORY_CREDS_ID)
                 }
               }
             }
