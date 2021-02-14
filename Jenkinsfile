@@ -46,26 +46,26 @@ pipeline {
             script{
               prebuildScripts.setVersion(facts)
               println("wsk-0")
-              prebuildScripts.setCreedentials(facts, baseImage_services_Admin_credentialId)
-              prebuildScripts.setJenkinsJobParams(facts)
+              // prebuildScripts.setCreedentials(facts, baseImage_services_Admin_credentialId)
+              // prebuildScripts.setJenkinsJobParams(facts)
             }
           }
         }
-        stage('Docker build'){
-          options {
-            skipDefaultCheckout true
-          }
-          when{
-            expression {
-              facts.applicationConfiguration.DOCKER_PROJECTS ? true : false
-            }
-          }
-          steps{
-            script{
-              dockerCi.buildProjects(facts.applicationConfiguration.DOCKER_PROJECTS,facts.version.semanticVersionWithBuildNumber)
-            }
-          }
-        }
+        // stage('Docker build'){
+        //   options {
+        //     skipDefaultCheckout true
+        //   }
+        //   when{
+        //     expression {
+        //       facts.applicationConfiguration.DOCKER_PROJECTS ? true : false
+        //     }
+        //   }
+        //   steps{
+        //     script{
+        //       dockerCi.buildProjects(facts.applicationConfiguration.DOCKER_PROJECTS,facts.version.semanticVersionWithBuildNumber)
+        //     }
+        //   }
+        // }
       }
       post {
         always {
