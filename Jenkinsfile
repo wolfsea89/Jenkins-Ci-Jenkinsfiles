@@ -18,6 +18,7 @@ pipeline {
     jenkinsScripts_directory = '.jenkins'
     gitCredentialId = 'github'
     applicationConfigurationInProjectJsonPath = 'configuration/jenkins.json'
+    baseImage_services_Admin_credentialId = 'baseImage_services_AminPassword'
   }
   stages{
     stage('Continuous Integration') {
@@ -44,7 +45,7 @@ pipeline {
           steps{
             script{
               prebuildScripts.setVersion(facts)
-              prebuildScripts.setCreedentials(facts)
+              prebuildScripts.setCreedentials(facts, baseImage_services_Admin_credentialId)
             }
           }
         }
