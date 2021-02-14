@@ -63,7 +63,10 @@ pipeline {
           }
           steps{
             script{
-              dockerCi.buildProjects(facts.applicationConfiguration.DOCKER_PROJECTS, facts.version.semanticVersionWithBuildNumber)
+              dockerCi.buildProjects(
+                facts.applicationConfiguration.DOCKER_PROJECTS,
+                facts.version.semanticVersionWithBuildNumber
+              )
             }
           }
         }
