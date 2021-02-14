@@ -32,7 +32,7 @@ pipeline {
               facts = gatheringFact(params, env)
               
               gitcheckout.application(facts.branchName, facts.repositoryUrl, gitCredentialId)
-              gitcheckout.jenkinsSripts(jenkinsScripts_directory ,gitCredentialId)
+              gitcheckout.jenkinsSripts(jenkinsScripts_directory)
               
               facts['applicationConfiguration'] = gatheringFact.applicationConfiguration(env.WORKSPACE + '/' + applicationConfigurationInProjectJsonPath)
               currentBuild.displayName = "#${env.BUILD_NUMBER} - ${facts.branchName} - ${facts.version.semanticVersionWithBuildNumber}"
