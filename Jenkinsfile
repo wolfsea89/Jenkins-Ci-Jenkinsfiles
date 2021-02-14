@@ -63,10 +63,11 @@ pipeline {
           }
           steps{
             script{
-              dockerCi.buildProjects(
+              def dockerImages = dockerCi.buildProjects(
                 facts.applicationConfiguration.DOCKER_PROJECTS,
                 facts.version.semanticVersionWithBuildNumber
               )
+              println(dockerImages)
             }
           }
         }
