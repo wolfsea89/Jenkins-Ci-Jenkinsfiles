@@ -45,9 +45,8 @@ pipeline {
           steps{
             script{
               prebuildScripts.setVersion(facts)
-              println("wsk-0")
-              // prebuildScripts.setCreedentials(facts, baseImage_services_Admin_credentialId)
-              // prebuildScripts.setJenkinsJobParams(facts)
+              prebuildScripts.setCreedentials(facts, baseImage_services_Admin_credentialId)
+              prebuildScripts.setJenkinsJobParams(facts)
             }
           }
         }
