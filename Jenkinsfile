@@ -28,7 +28,6 @@ pipeline {
         stage('Preparing to work') {
           steps {
             script {
-              deleteDir()
               facts = gatheringFact(params, env)
               
               gitcheckout.application(facts.branchName, facts.repositoryUrl, gitCredentialId)
@@ -38,6 +37,15 @@ pipeline {
               currentBuild.displayName = "#${env.BUILD_NUMBER} - ${facts.branchName} - ${facts.version.semanticVersionWithBuildNumber}"
               env.facts = facts
 
+            }
+          }
+        }
+        stage('Prebuild Scripts') {
+          steps{
+            script{
+              println(facts)
+              // prebuildScripts.setVersion()
+              // prebuildScripts.setCreedentials()
             }
           }
         }
