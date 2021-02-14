@@ -7,7 +7,7 @@ library identifier: 'Jenkins-Sharedlibraries@feature/gatheringFact', retriever: 
 pipeline {
   parameters {
     string(name: 'branch', defaultValue: 'feature/create_baseimage', description: 'Branch name')
-    string(name: 'repositoryUrl', defaultValue: 'git@github.com:wolfsea89/Jenkins-BaseImage.git', description: 'Repository URL (git/https)')
+    string(name: 'REPOSITORY_URL', defaultValue: 'git@github.com:wolfsea89/Jenkins-BaseImage.git', description: 'Repository URL (git/https)')
     string(name: 'manualVersion', defaultValue: '', description: 'Set manual version (X.Y.Z). Worked with branch release, hotfix, master without version')
   }
   agent none
@@ -15,11 +15,14 @@ pipeline {
     skipDefaultCheckout true
   }
   environment {
-    jenkinsScripts_directory = '.jenkins'
-    gitCredentialId = 'github'
-    applicationConfigurationInProjectJsonPath = 'configuration/jenkins.json'
-    baseImage_services_Admin_credentialId = 'baseImage_services_AminPassword'
-    dockerRepository_credentialId = 'docker_hub'
+    JENKINSFILE_SCRIPTS_DIR = '.jenkins'
+    GIT_CREDS_ID = 'github'
+    APP_CONFIGURATION_JSON_PATH = 'configuration/jenkins.json'
+    BASEIMAGE_SERVICES_ADMIN_CREDS_ID = 'baseImage_services_AminPassword'
+    DOCKER_REPOSITORY_CREDS_ID = 'docker_hub'
+    REPOSITORY_URL = 'https://index.docker.io/v1/'
+    REPOSITORY_SNAPSHOT_NAME = 'wolfsea89/jenkins_master_snapshot'
+    REPOSITORY_RELEASE_NAME = 'wolfsea89/jenkins_master'
   }
   stages{
     stage('Continuous Integration') {
@@ -33,10 +36,10 @@ pipeline {
               deleteDir()
               facts = gatheringFact(params, env)
               
-              gitcheckout.application(facts.branchName, facts.repositoryUrl, gitCredentialId)
-              gitcheckout.jenkinsSripts(jenkinsScripts_directory)
+              gitcheckout.application(facts.branchName, facts.REPOSITORY_URL, GIT_CREDS_ID)
+              gitcheckout.jenkinsSripts(JENKINSFILE_SCRIPTS_DIR)
               
-              facts['applicationConfiguration'] = gatheringFact.applicationConfiguration(env.WORKSPACE + '/' + applicationConfigurationInProjectJsonPath)
+              facts['applicationConfiguration'] = gatheringFact.applicationConfiguration(env.WORKSPACE + '/' + APP_CONFIGURATION_JSON_PATH)
               currentBuild.displayName = "#${env.BUILD_NUMBER} - ${facts.branchName} - ${facts.version.semanticVersionWithBuildNumber}"
               env.facts = facts
 
@@ -47,7 +50,7 @@ pipeline {
           steps{
             script{
               prebuildScripts.setVersion(facts)
-              prebuildScripts.setCredentials(facts, baseImage_services_Admin_credentialId)
+              prebuildScripts.setCredentials(facts, BASEIMAGE_SERVICES_ADMIN_CREDS_ID)
               prebuildScripts.setJenkinsJobInfo(facts)
             }
           }
@@ -60,7 +63,7 @@ pipeline {
           }
           steps{
             script{
-              dockerCi.buildProjects(facts.applicationConfiguration.DOCKER_PROJECTS,facts.version.semanticVersionWithBuildNumber)
+              dockerCi.buildProjects(facts.applicationConfiguration.DOCKER_PROJECTS, facts.version.semanticVersionWithBuildNumber)
               println(facts.artifactType)
             }
           }
@@ -76,7 +79,7 @@ pipeline {
               steps{
                 script{
                   println("rekease")
-                  // dockerCi.publishBaseImage(facts.applicationConfiguration.DOCKER_PROJECTS,facts.version.semanticVersionWithBuildNumber, dockerRepository_credentialId)
+                  dockerCi.publishBaseImage(facts.applicationConfiguration.DOCKER_PROJECTS,facts.version.semanticVersionWithBuildNumber, DOCKER_REPOSITORY_CREDS_ID)
                 }
               }
             }
@@ -90,7 +93,7 @@ pipeline {
               steps{
                 script{
                   println("snapshot")
-                  // dockerCi.buildProjects(facts.applicationConfiguration.DOCKER_PROJECTS,facts.version.semanticVersionWithBuildNumber)
+                  publishBaseImage(facts.applicationConfiguration.DOCKER_PROJECTS, facts.version, env.REPOSITORY_URL, env.REPOSITORY_SNAPSHOT_NAME, DOCKER_REPOSITORY_CREDS_ID)
                 }
               }
             }
