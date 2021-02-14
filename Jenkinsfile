@@ -80,7 +80,7 @@ pipeline {
               }
               steps{
                 script{
-                  publishBaseImage(
+                  dockerCi.publishBaseImage(
                     facts.applicationConfiguration.DOCKER_PROJECTS,
                     facts.version.semanticVersionWithBuildNumber,
                     env.DOCKER_REPOSITORY_URL,
@@ -99,7 +99,7 @@ pipeline {
               }
               steps{
                 script{
-                  publishBaseImage(
+                  dockerCi.publishBaseImage(
                     facts.applicationConfiguration.DOCKER_PROJECTS,
                     facts.version.semanticVersionWithBuildNumber,
                     env.DOCKER_REPOSITORY_URL,
