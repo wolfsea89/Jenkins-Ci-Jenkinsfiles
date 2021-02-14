@@ -51,12 +51,24 @@ pipeline {
           }
         }
         stage('Docker build'){
+          when{
+            expression {
+              facts.applicationConfiguration.DOCKER_PROJECTS ? true : false
+            }
+          }
+          steps{
+            script{
+              dockerCi.buildProjects(facts.applicationConfiguration.DOCKER_PROJECTS,facts.version.semanticVersionWithBuildNumber)
+            }
+          }
+        }
+        stage('Docker publish'){
           options {
             skipDefaultCheckout true
           }
           when{
             expression {
-              facts.applicationConfiguration.DOCKER_PROJECTS ? true : false
+              facts.branchPrefix ==~// ? true : false
             }
           }
           steps{
