@@ -44,8 +44,8 @@ pipeline {
           steps{
             script{
               println(facts)
-              // prebuildScripts.setVersion()
-              // prebuildScripts.setCreedentials()
+              prebuildScripts.setVersion(facts)
+              prebuildScripts.setCreedentials(facts)
             }
           }
         }
