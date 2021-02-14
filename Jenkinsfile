@@ -7,7 +7,7 @@ library identifier: 'Jenkins-Sharedlibraries@feature/gatheringFact', retriever: 
 pipeline {
   parameters {
     string(name: 'branch', defaultValue: 'feature/create_baseimage', description: 'Branch name')
-    string(name: 'REPOSITORY_URL', defaultValue: 'git@github.com:wolfsea89/Jenkins-BaseImage.git', description: 'Repository URL (git/https)')
+    string(name: 'repositoryUrl', defaultValue: 'git@github.com:wolfsea89/Jenkins-BaseImage.git', description: 'Repository URL (git/https)')
     string(name: 'manualVersion', defaultValue: '', description: 'Set manual version (X.Y.Z). Worked with branch release, hotfix, master without version')
   }
   agent none
@@ -20,9 +20,9 @@ pipeline {
     APP_CONFIGURATION_JSON_PATH = 'configuration/jenkins.json'
     BASEIMAGE_SERVICES_ADMIN_CREDS_ID = 'baseImage_services_AminPassword'
     DOCKER_REPOSITORY_CREDS_ID = 'docker_hub'
-    REPOSITORY_URL = 'https://index.docker.io/v1/'
-    REPOSITORY_SNAPSHOT_NAME = 'wolfsea89/jenkins_master_snapshot'
-    REPOSITORY_RELEASE_NAME = 'wolfsea89/jenkins_master'
+    DOCKER_REPOSITORY_URL = 'https://index.docker.io/v1/'
+    DOCKER_REPOSITORY_SNAPSHOT_NAME = 'wolfsea89/jenkins_master_snapshot'
+    DOCKER_REPOSITORY_RELEASE_NAME = 'wolfsea89/jenkins_master'
   }
   stages{
     stage('Continuous Integration') {
@@ -36,7 +36,7 @@ pipeline {
               deleteDir()
               facts = gatheringFact(params, env)
               
-              gitcheckout.application(facts.branchName, facts.REPOSITORY_URL, GIT_CREDS_ID)
+              gitcheckout.application(facts.branchName, facts.repositoryUrl, GIT_CREDS_ID)
               gitcheckout.jenkinsSripts(JENKINSFILE_SCRIPTS_DIR)
               
               facts['applicationConfiguration'] = gatheringFact.applicationConfiguration(env.WORKSPACE + '/' + APP_CONFIGURATION_JSON_PATH)
@@ -64,7 +64,6 @@ pipeline {
           steps{
             script{
               dockerCi.buildProjects(facts.applicationConfiguration.DOCKER_PROJECTS, facts.version.semanticVersionWithBuildNumber)
-              println(facts.artifactType)
             }
           }
         }
@@ -92,7 +91,7 @@ pipeline {
               }
               steps{
                 script{
-                  publishBaseImage(facts.applicationConfiguration.DOCKER_PROJECTS, facts.version, env.REPOSITORY_URL, env.REPOSITORY_SNAPSHOT_NAME, DOCKER_REPOSITORY_CREDS_ID)
+                  publishBaseImage(facts.applicationConfiguration.DOCKER_PROJECTS, facts.version, env.DOCKER_REPOSITORY_URL, env.DOCKER_REPOSITORY_SNAPSHOT_NAME, DOCKER_REPOSITORY_CREDS_ID)
                 }
               }
             }
