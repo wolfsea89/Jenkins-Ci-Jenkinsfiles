@@ -116,7 +116,7 @@ pipeline {
                     env.DOCKER_REPOSITORY_SNAPSHOT_NAME,
                     env.DOCKER_REPOSITORY_CREDS_ID
                   )
-                  dockerCi.publishBaseImage(
+                  dockerCi.cleanAfterBuild(
                     facts.applicationConfiguration.DOCKER_PROJECTS,
                     facts.version.semanticVersionWithBuildNumber,
                   )
