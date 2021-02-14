@@ -48,11 +48,20 @@ pipeline {
           }
         }
         stage('Prebuild Scripts') {
-          steps{
-            script{
-              prebuildScripts.setVersion(facts)
-              prebuildScripts.setCredentials(facts, env.BASEIMAGE_SERVICES_ADMIN_CREDS_ID)
-              prebuildScripts.setJenkinsJobInfo(facts)
+          parallel {
+            stage('Docker'){
+              when{
+                expression {
+                  facts.applicationConfiguration.DOCKER_PROJECTS ? true : false
+                }
+              }
+              steps{
+                script{
+                  prebuildScriptsDocker.setVersion(facts)
+                  prebuildScriptsDocker.setCredentials(facts, env.BASEIMAGE_SERVICES_ADMIN_CREDS_ID)
+                  prebuildScriptsDocker.setJenkinsJobInfo(facts)
+                }
+              }
             }
           }
         }
@@ -106,6 +115,10 @@ pipeline {
                     env.DOCKER_REPOSITORY_URL,
                     env.DOCKER_REPOSITORY_SNAPSHOT_NAME,
                     env.DOCKER_REPOSITORY_CREDS_ID
+                  )
+                  dockerCi.publishBaseImage(
+                    facts.applicationConfiguration.DOCKER_PROJECTS,
+                    facts.version.semanticVersionWithBuildNumber,
                   )
                 }
               }
