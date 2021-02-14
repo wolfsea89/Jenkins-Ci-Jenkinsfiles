@@ -17,7 +17,7 @@ pipeline {
   environment {
     jenkinsScripts_directory = '.jenkins'
     gitCredentialId = 'github'
-    applicationConfigurationInProjectJsonPath = 'configuration/env.json'
+    applicationConfigurationInProjectJsonPath = 'configuration/jenkins.json'
   }
   stages{
     stage('Continuous Integration') {
