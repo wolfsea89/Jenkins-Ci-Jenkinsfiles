@@ -34,12 +34,12 @@ pipeline {
           steps {
             script {
               deleteDir()
-              facts = gatheringFact(params, env)
+              facts = gatheringFacts(params, env)
               
               gitcheckout.application(facts.branchName, facts.repositoryUrl, env.GIT_CREDS_ID)
               gitcheckout.jenkinsSripts(JENKINSFILE_SCRIPTS_DIR)
               
-              facts['applicationConfiguration'] = gatheringFact.applicationConfiguration(env.WORKSPACE + '/' + APP_CONFIGURATION_JSON_PATH)
+              facts['applicationConfiguration'] = gatheringFacts.applicationConfiguration(env.WORKSPACE + '/' + APP_CONFIGURATION_JSON_PATH)
               currentBuild.displayName = "#${env.BUILD_NUMBER} - ${facts.branchName} - ${facts.version.semanticVersionWithBuildNumber}"
               env.facts = facts
 
