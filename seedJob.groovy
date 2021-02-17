@@ -10,7 +10,7 @@ import groovy.json.*
  
 jenkins = Jenkins.instance
  
-println ($WORKSPACE)
+println (env.WORKSPACE)
 
  
 // def jsonSlurper = new JsonSlurper()
