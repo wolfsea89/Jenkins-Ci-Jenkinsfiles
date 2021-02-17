@@ -3,7 +3,9 @@ import groovy.json.JsonSlurper
  
 // filename = 
 // println(filename)
-println(env.WORKSPACE)
+def a = System.getProperty("user.dir");
+println(a)
+
  
 def jsonSlurper = new JsonSlurper()
 data = jsonSlurper.parse(new File("jobs.json"))
