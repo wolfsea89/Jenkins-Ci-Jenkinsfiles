@@ -8,9 +8,14 @@ import java.util.stream.Collectors
 import java.util.stream.Stream
 import groovy.json.*
  
-jenkins = Jenkins.instance
+
+import jenkins.automation.utils.ScmUtils
+import jenkins.automation.utils.EnvironmentUtils
+
+def environmentVarsConfigFile = readFileFromWorkspace('jobs.json')
+
  
-println (env.WORKSPACE)
+println (environmentVarsConfigFile)
 
  
 // def jsonSlurper = new JsonSlurper()
