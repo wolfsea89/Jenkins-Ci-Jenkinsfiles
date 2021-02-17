@@ -9,7 +9,7 @@ import java.util.stream.Stream
 import groovy.json.*
  
  
-println (env.WORKSPACE)
+println ($WORKSPACE)
 
  
 // def jsonSlurper = new JsonSlurper()
