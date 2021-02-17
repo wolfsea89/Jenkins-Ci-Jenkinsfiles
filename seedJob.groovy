@@ -8,6 +8,7 @@ import java.util.stream.Collectors
 import java.util.stream.Stream
 import groovy.json.*
  
+jenkins = Jenkins.instance
  
 println ($WORKSPACE)
 
