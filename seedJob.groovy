@@ -6,10 +6,8 @@ def jobs = new JsonSlurper().parseText(readFileFromWorkspace(jobsDefinition))
 
 for (job in jobs){
   pipelineJob(job.name) {
-    steps {
-      parameters{
-        stringParam("branch", job.defaultBranch, 'Branch name', true)
-      }
+    parameters{
+      stringParam("branch", job.defaultBranch, 'Branch name', true)
     }
   }
 }
