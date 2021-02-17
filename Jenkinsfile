@@ -35,7 +35,6 @@ pipeline {
             script {
               deleteDir()
               facts = gatheringFacts(params, env)
-              println(facts)
               
               gitcheckout.application(facts.branchName, facts.repositoryUrl, env.GIT_CREDS_ID)
               gitcheckout.jenkinsSripts(JENKINSFILE_SCRIPTS_DIR)
