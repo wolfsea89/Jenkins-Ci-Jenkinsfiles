@@ -5,16 +5,16 @@ library identifier: 'Jenkins-Sharedlibraries@master', retriever: modernSCM([
 ])
 
 pipeline {
-  parameters {
+  // parameters {
     // string(name: 'branch', defaultValue: 'feature/create_baseimage', description: 'Branch name')
     // string(name: 'repositoryUrl', defaultValue: 'git@github.com:wolfsea89/Jenkins-BaseImage.git', description: 'Repository URL (git/https)')
     // string(name: 'manualVersion', defaultValue: '', description: 'Set manual version (X.Y.Z). Worked with branch release, hotfix, master without version')
-  }
+  // }
   agent none
   options {
     skipDefaultCheckout true
   }
-  environment {
+  // environment {
     // JENKINSFILE_SCRIPTS_DIR = '.jenkins'
     // GIT_CREDS_ID = 'github'
     // APP_CONFIGURATION_JSON_PATH = 'configuration/jenkins.json'
@@ -23,7 +23,7 @@ pipeline {
     // DOCKER_REPOSITORY_URL = 'https://index.docker.io/v1/'
     // DOCKER_REPOSITORY_SNAPSHOT_NAME = 'wolfsea89/${projectName}_snapshot'
     // DOCKER_REPOSITORY_RELEASE_NAME = 'wolfsea89/${projectName}'
-  }
+  // }
   stages{
     stage('Continuous Integration') {
       agent {
