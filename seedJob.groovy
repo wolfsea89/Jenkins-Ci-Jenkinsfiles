@@ -20,6 +20,24 @@ for (job in jobs){
         env('DOCKER_REPOSITORY_SNAPSHOT_NAME', 'wolfsea89/${projectName}_snapshot')
         env('DOCKER_REPOSITORY_RELEASE_NAME', 'wolfsea89/${projectName}')
       }
+      scm {
+        git {
+          remote {
+              url('git@github.com:wolfsea89/Jenkins-Ci-Jenkinsfiles.git')
+              credentials('github')
+          }
+          branch('master')
+          extensions {
+            wipeOutWorkspace()
+            submoduleOptions {
+              disable(false)
+              parentCredentials(true)
+              recursive(false)
+              tracking(true)
+            }
+          }
+        }
+      }
     }
   }
 }
