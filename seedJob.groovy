@@ -1,10 +1,12 @@
-String jobs = readFileFromWorkspace('jobs.json')
-// def view = 
+import groovy.json.JsonSlurper
+
+String jobsDefinition = 'jobs.json'
 
 job('example-1') {
     steps {
-        def test = readJSON text: jobs
-        println(test)
+      String jobs = readFileFromWorkspace(jobsDefinition)
+      def test = new JsonSlurper().parseText(jobs)
+      println(test)
     }
 }
 
