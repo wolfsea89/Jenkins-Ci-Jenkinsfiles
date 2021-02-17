@@ -3,7 +3,7 @@ import groovy.json.JsonSlurper
  
 // filename = 
 // println(filename)
-def a = System.getProperty("user.dir");
+def a = getClass().protectionDomain.codeSource.location.path
 println(a)
 
  
