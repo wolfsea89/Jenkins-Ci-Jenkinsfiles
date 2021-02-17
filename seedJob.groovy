@@ -1,13 +1,19 @@
 import groovy.json.JsonSlurper
 
 String jobsDefinition = 'jobs.json'
-String jobs = readFileFromWorkspace(jobsDefinition)
-def test = new JsonSlurper().parseText(jobs)
 
-job('example-1') {
+def jobs = new JsonSlurper().parseText(readFileFromWorkspace(jobsDefinition))
+
+for (job in jobs){
+  pipelineJob(job.name) {
     steps {
+      parameters{
+        stringParam("branch", job.defaultBranch, 'Branch name', true)
+        }
+      }
       println(test)
     }
+  }
 }
 
 

@@ -1,5 +1,7 @@
 [
   {
-    "name": "Jenkins-BaseImage"
+    "name": "Jenkins-BaseImage-from-seedJob",
+    "jobType": "Build",
+    "defaultBranch": "develop"
   }
 ]
