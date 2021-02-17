@@ -3,7 +3,7 @@ def jobs = readFileFromWorkspace('jobs.json')
 
 job('example-1') {
     steps {
-        def test = readJSON file: jobs
+        def test = readJSON text: jobs
         println(test)
     }
 }
