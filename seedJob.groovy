@@ -1,4 +1,4 @@
-def jobs = readFileFromWorkspace('jobs.json')
+String jobs = readFileFromWorkspace('jobs.json')
 // def view = 
 
 job('example-1') {
