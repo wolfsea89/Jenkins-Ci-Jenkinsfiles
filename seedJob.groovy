@@ -9,8 +9,8 @@ import java.util.stream.Stream
 import groovy.json.*
  
 
-import jenkins.automation.utils.ScmUtils
-import jenkins.automation.utils.EnvironmentUtils
+// import jenkins.automation.utils.ScmUtils
+// import jenkins.automation.utils.EnvironmentUtils
 
 def environmentVarsConfigFile = readFileFromWorkspace('jobs.json')
 
