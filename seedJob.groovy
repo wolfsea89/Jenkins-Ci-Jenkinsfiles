@@ -29,7 +29,7 @@ for (job in jobs){
                 url('git@github.com:wolfsea89/Jenkins-Ci-Jenkinsfiles.git')
                 credentials('github')
             }
-            branch('master')
+            branch('feature/seedjob')
             extensions {
               wipeOutWorkspace()
               submoduleOptions {
