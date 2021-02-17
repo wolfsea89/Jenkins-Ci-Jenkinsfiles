@@ -1,10 +1,10 @@
 import groovy.json.JsonSlurper
  
  
-filename = new File("jobs.json")
-println(filename)
+// filename = 
+// println(filename)
  
 def jsonSlurper = new JsonSlurper()
-data = jsonSlurper.parse(filename)
+data = jsonSlurper.parse(new File("jobs.json"))
 println(data)
 println ("WSK")
