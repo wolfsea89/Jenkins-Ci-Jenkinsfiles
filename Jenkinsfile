@@ -134,11 +134,6 @@ pipeline {
           }
         }
       }
-      post {
-        always {
-          deleteDir()
-        }
-      }
     }
   }
 }
