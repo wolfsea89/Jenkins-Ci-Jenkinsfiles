@@ -1,11 +1,11 @@
 import groovy.json.JsonSlurper
 
 String jobsDefinition = 'jobs.json'
+String jobs = readFileFromWorkspace(jobsDefinition)
+def test = new JsonSlurper().parseText(jobs)
 
 job('example-1') {
     steps {
-      String jobs = readFileFromWorkspace(jobsDefinition)
-      def test = new JsonSlurper().parseText(jobs)
       println(test)
     }
 }
