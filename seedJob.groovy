@@ -9,9 +9,7 @@ for (job in jobs){
     steps {
       parameters{
         stringParam("branch", job.defaultBranch, 'Branch name', true)
-        }
       }
-      println(test)
     }
   }
 }
