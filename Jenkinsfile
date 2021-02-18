@@ -33,8 +33,7 @@ pipeline {
               deleteDir()
               GatheringFacts facts = new GatheringFacts()
               facts.setParams(params)
-              def test = facts.getCommandList
-              println(test)
+              // println(test)
 
               facts = gatheringFacts(params, env)
               
