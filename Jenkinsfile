@@ -30,21 +30,15 @@ pipeline {
         stage('Preparing to work') {
           steps {
             script {
-
-              def facts = new GatheringFacts(params, env)
-              facts.setJenkinsScriptDirectory(".jenkins")
-
               deleteDir()
 
+              def facts = new GatheringFacts(params, env)
               def git = new Git(this)
-              println(scm.getProperties())
-              git.checkoutApplicationRepository(facts.branchName, facts.repositoryUrl, facts.gitCredentialId)
-              git.checkoutJenkinsSripts(facts.repositoryUrl)
+                  git.checkoutApplicationRepository(facts.branchName, facts.repositoryUrl, facts.gitCredentialId)
+                  git.checkoutJenkinsSripts(facts.repositoryUrl)
               
-              gitcheckout.application
-              gitcheckout.jenkinsSripts(JENKINSFILE_SCRIPTS_DIR)
-              
-              facts['applicationConfiguration'] = gatheringFacts.applicationConfiguration(env.WORKSPACE + '/' + APP_CONFIGURATION_JSON_PATH)
+                  facts.readApplicationConfigurationFiles()
+              println facts.getProperties()
               currentBuild.displayName = "#${env.BUILD_NUMBER} - ${facts.branchName} - ${facts.version.semanticVersionWithBuildNumber}"
               env.facts = facts
 
