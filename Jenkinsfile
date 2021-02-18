@@ -38,7 +38,7 @@ pipeline {
                   git.checkoutJenkinsSripts(facts.repositoryUrl)
               
                   facts.readApplicationConfigurationFiles()
-              println facts.getProperties()
+              println (facts.getProperties())
               currentBuild.displayName = "#${env.BUILD_NUMBER} - ${facts.branchName} - ${facts.version.semanticVersionWithBuildNumber}"
               env.facts = facts
 
