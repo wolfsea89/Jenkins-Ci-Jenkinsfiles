@@ -56,7 +56,7 @@ pipeline {
               }
               steps{
                 script{
-                  println(facts.applicationConfiguration)
+                  println(env.facts.applicationConfiguration)
                   prebuildScriptsDocker.setVersion(facts)
                   prebuildScriptsDocker.setCredentials(facts, env.BASEIMAGE_SERVICES_ADMIN_CREDS_ID)
                   prebuildScriptsDocker.setJenkinsJobInfo(facts)
