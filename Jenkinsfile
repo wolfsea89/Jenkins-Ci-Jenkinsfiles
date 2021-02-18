@@ -35,7 +35,7 @@ pipeline {
               def facts = new GatheringFacts(params, env)
               def git = new Git(this)
                   git.checkoutApplicationRepository(facts.branchName, facts.repositoryUrl, facts.gitCredentialId)
-                  git.checkoutJenkinsSripts(facts.repositoryUrl)
+                  git.checkoutJenkinsSripts(facts.jenkinsScriptDirectory)
               println (facts.getProperties())
                   facts.readApplicationConfigurationFiles()
               println (facts.getProperties())
