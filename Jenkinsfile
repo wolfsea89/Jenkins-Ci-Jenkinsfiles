@@ -31,9 +31,13 @@ pipeline {
           steps {
             script {
               deleteDir()
+
               IGatheringFacts facts = new GatheringFacts()
               println("WSK")
               facts.setParams(params)
+              def fact = facts.getParams()
+              println(fact)
+
               // println(test)
               println("WSK1")
 
