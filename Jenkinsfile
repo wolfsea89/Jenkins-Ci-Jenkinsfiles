@@ -32,7 +32,7 @@ pipeline {
             script {
               deleteDir()
 
-              def facts = [$class: 'GatheringFacts'
+              def facts = [$class: 'GatheringFacts',
                 setBranchName: params.branch,
                 setRepositoryUrl: params.repositoryUrl
               ]
