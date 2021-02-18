@@ -57,7 +57,7 @@ pipeline {
               steps{
                 script{
                   def facts = new GatheringFacts(params, env)
-                  println(facts.applicationJsonFile)
+                  println(facts.applicationConfiguration)
                   prebuildScriptsDocker.setVersion(facts)
                   prebuildScriptsDocker.setCredentials(facts, env.BASEIMAGE_SERVICES_ADMIN_CREDS_ID)
                   prebuildScriptsDocker.setJenkinsJobInfo(facts)
