@@ -32,7 +32,7 @@ pipeline {
             script {
               deleteDir()
 
-              IGatheringFacts facts = new GatheringFacts(this)
+              IGatheringFacts facts = new GatheringFacts()
               println("WSK")
               facts.setBranchName(params.branch)
               String fact = facts.getBranchNamePrefix()
