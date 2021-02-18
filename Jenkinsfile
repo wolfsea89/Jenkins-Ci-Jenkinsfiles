@@ -37,7 +37,7 @@ pipeline {
                   git.checkoutApplicationRepository(facts.branchName, facts.repositoryUrl, facts.gitCredentialId)
                   git.checkoutJenkinsSripts(facts.jenkinsScriptDirectory)
               
-              def jsonString = readJSON file: facts.applicationJsonFile
+              String jsonString = readJSON file: facts.applicationJsonFile
               println(jsonString)
                   facts.covertApplicationJsonToObject(jsonString)
               println (facts.getProperties())
