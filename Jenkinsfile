@@ -35,12 +35,11 @@ pipeline {
               def facts = new GatheringFacts(params, env)
               def git = new Git(this)
                   git.checkoutApplicationRepository(facts.branchName, facts.repositoryUrl, facts.gitCredentialId)
-                  git.checkoutJenkinsSripts(facts.jenkinsScriptDirectory)
+                  git.checkoutJenkinsSripts(facts.repositoryUrl)
               
-              String jsonString = readJSON file: facts.applicationJsonFile
-              println(jsonString)
-                  facts.covertApplicationJsonToObject(jsonString)
-              println (facts.getProperties())
+                  facts.readApplicationConfigurationFiles(facts.applicationJsonFile)
+              println fac
+              facts['applicationConfiguration'] = gatheringFacts.applicationConfiguration(env.WORKSPACE + '/' + APP_CONFIGURATION_JSON_PATH)
               currentBuild.displayName = "#${env.BUILD_NUMBER} - ${facts.branchName} - ${facts.version.semanticVersionWithBuildNumber}"
               env.facts = facts
 
