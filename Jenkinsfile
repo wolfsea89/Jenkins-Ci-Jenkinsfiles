@@ -41,6 +41,7 @@ pipeline {
               def appJson = readJSON file: facts.applicationJsonFile
               facts.setApplicationConfiguration(appJson)
 
+              println(facts.getProperties())
               env.facts = facts
               currentBuild.displayName = "#${facts.jobBuildNumber} - ${facts.branchName} - ${facts.versionWithBuildNumber}"
             }
