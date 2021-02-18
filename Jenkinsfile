@@ -35,7 +35,7 @@ pipeline {
               IGatheringFacts facts = new GatheringFacts()
               println("WSK")
               facts.setBranchName(params.branch)
-              String fact = facts.getBranchNamePrefix()
+              String fact = facts.getPrefix()
               println(fact)
 
               // println(test)
