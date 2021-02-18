@@ -38,12 +38,10 @@ pipeline {
                   git.checkoutJenkinsSripts(facts.repositoryUrl)
               
               def appJson = readJSON file: facts.applicationJsonFile
-              
-                  facts.setApplicationConfiguration(appJson)
-              println(facts.getProperties())
-              currentBuild.displayName = "#${facts.jobBuildNumber} - ${facts.branchName} - ${facts.versionWithBuildNumber}"
-              env.facts = facts
+              facts.setApplicationConfiguration(appJson)
 
+              env.facts = facts
+              currentBuild.displayName = "#${facts.jobBuildNumber} - ${facts.branchName} - ${facts.versionWithBuildNumber}"
             }
           }
         }
@@ -52,11 +50,13 @@ pipeline {
             stage('Docker'){
               when{
                 expression {
-                  facts.applicationConfiguration.DOCKER_PROJECTS ? true : false
+                  true
+                  // facts.applicationConfiguration.DOCKER_PROJECTS ? true : false
                 }
               }
               steps{
                 script{
+                  println(facts.getProperties())
                   prebuildScriptsDocker.setVersion(facts)
                   prebuildScriptsDocker.setCredentials(facts, env.BASEIMAGE_SERVICES_ADMIN_CREDS_ID)
                   prebuildScriptsDocker.setJenkinsJobInfo(facts)
