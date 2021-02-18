@@ -1,5 +1,7 @@
 @Library('Sharedlibraries') import devops.ci.*
 
+def facts = new GatheringFacts(params, env)
+
 pipeline {
   ////// SET PARAMETERS BY SEED JOB
   parameters {
@@ -31,8 +33,6 @@ pipeline {
           steps {
             script {
               deleteDir()
-
-              def facts = new GatheringFacts(params, env)
               def git = new Git(this)
                   git.checkoutApplicationRepository(facts.branchName, facts.repositoryUrl, facts.gitCredentialId)
                   git.checkoutJenkinsSripts(facts.repositoryUrl)
