@@ -1,4 +1,4 @@
-@library('Sharedlibraries') import devops.ci.*
+@Library('Sharedlibraries') import devops.ci.*
 
 pipeline {
   ////// SET PARAMETERS BY SEED JOB
