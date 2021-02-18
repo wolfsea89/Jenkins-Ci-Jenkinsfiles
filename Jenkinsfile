@@ -56,7 +56,6 @@ pipeline {
               }
               steps{
                 script{
-                   def facts = new GatheringFacts(this, params, env)
                   println(facts.applicationConfiguration)
                   // prebuildScriptsDocker.setVersion(facts)
                   // prebuildScriptsDocker.setCredentials(facts, env.BASEIMAGE_SERVICES_ADMIN_CREDS_ID)
