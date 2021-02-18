@@ -51,7 +51,7 @@ pipeline {
               when{
                 expression {
                   true
-                  // facts.applicationConfiguration.DOCKER_PROJECTS ? true : false
+                  // facts.applicationConfiguration ? true : false
                 }
               }
               steps{
