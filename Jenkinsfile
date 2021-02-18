@@ -37,6 +37,7 @@ pipeline {
                   git.checkoutApplicationRepository(facts.branchName, facts.repositoryUrl, facts.gitCredentialId)
                   git.checkoutJenkinsSripts(facts.repositoryUrl)
               
+              println(facts.applicationJsonFile)
               def appJson = readJSON file: facts.applicationJsonFile
               facts.setApplicationConfiguration(appJson)
 
