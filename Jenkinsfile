@@ -1,8 +1,4 @@
-library identifier: 'Jenkins-Sharedlibraries@master', retriever: modernSCM([
-  $class: 'GitSCMSource',
-  remote: 'git@github.com:wolfsea89/Jenkins-Sharedlibraries.git',
-  credentialsId: 'github'
-])
+@library('Sharedlibraries@feature/class') import devops.*
 
 pipeline {
   ////// SET PARAMETERS BY SEED JOB
@@ -35,6 +31,11 @@ pipeline {
           steps {
             script {
               deleteDir()
+              GatheringFacts facts = new GatheringFacts()
+              facts.setParams(params)
+              def test = facts.getCommandList
+              println(test)
+
               facts = gatheringFacts(params, env)
               
               gitcheckout.application(facts.branchName, facts.repositoryUrl, env.GIT_CREDS_ID)
