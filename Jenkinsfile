@@ -30,13 +30,16 @@ pipeline {
         stage('Preparing to work') {
           steps {
             script {
-              deleteDir()
 
               def facts = new GatheringFacts(params, env)
+              facts.setJenkinsScriptDirectory(".jenkins")
 
-              println(scm.doGenerateSubmoduleConfigurations)
+              println(facts.getPropeties())
+              deleteDir()
+              Git.checkoutApplicationRepository(facts.branchName, facts.repositoryUrl)
+              Git.checkoutJenkinsSripts(facts.branchName, facts.repositoryUrl)
               
-              gitcheckout.application(facts.branchName, facts.repositoryUrl, env.GIT_CREDS_ID)
+              gitcheckout.application
               gitcheckout.jenkinsSripts(JENKINSFILE_SCRIPTS_DIR)
               
               facts['applicationConfiguration'] = gatheringFacts.applicationConfiguration(env.WORKSPACE + '/' + APP_CONFIGURATION_JSON_PATH)
