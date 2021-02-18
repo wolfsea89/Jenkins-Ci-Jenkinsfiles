@@ -32,7 +32,7 @@ pipeline {
             script {
               deleteDir()
 
-              def facts = new GatheringFacts(params, env)
+              def facts = new GatheringFacts(this, params, env)
               def git = new Git(this)
                   git.checkoutApplicationRepository(facts.branchName, facts.repositoryUrl, facts.gitCredentialId)
                   git.checkoutJenkinsSripts(facts.repositoryUrl)
