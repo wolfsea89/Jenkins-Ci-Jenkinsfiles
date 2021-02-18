@@ -36,8 +36,8 @@ pipeline {
 
               println(facts.getProperties())
               deleteDir()
-              Git.checkoutApplicationRepository(facts.branchName, facts.repositoryUrl)
-              Git.checkoutJenkinsSripts(facts.branchName, facts.repositoryUrl)
+              Git(this).checkoutApplicationRepository(facts.branchName, facts.repositoryUrl)
+              Git(this).checkoutJenkinsSripts(facts.branchName, facts.repositoryUrl)
               
               gitcheckout.application
               gitcheckout.jenkinsSripts(JENKINSFILE_SCRIPTS_DIR)
