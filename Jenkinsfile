@@ -32,7 +32,7 @@ pipeline {
             script {
               deleteDir()
 
-              def facts = new GatheringFacts()
+              def facts = new GatheringFacts(params, env)
               println params
               facts.setParams(params)
               println(facts.branchName)
