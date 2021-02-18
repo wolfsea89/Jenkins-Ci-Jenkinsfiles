@@ -32,8 +32,10 @@ pipeline {
             script {
               deleteDir()
               IGatheringFacts facts = new GatheringFacts()
+              println("WSK")
               facts.setParams(params)
               // println(test)
+              println("WSK1")
 
               facts = gatheringFacts(params, env)
               
