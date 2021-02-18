@@ -34,7 +34,7 @@ pipeline {
               def facts = new GatheringFacts(params, env)
               facts.setJenkinsScriptDirectory(".jenkins")
 
-              println(facts.getPropeties())
+              println(facts.getProperties())
               deleteDir()
               Git.checkoutApplicationRepository(facts.branchName, facts.repositoryUrl)
               Git.checkoutJenkinsSripts(facts.branchName, facts.repositoryUrl)
