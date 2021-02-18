@@ -35,8 +35,9 @@ pipeline {
               facts.setJenkinsScriptDirectory(".jenkins")
 
               deleteDir()
-              
+
               def git = new Git(this)
+              println(scm.getProperties())
               git.checkoutApplicationRepository(facts.branchName, facts.repositoryUrl)
               git.checkoutJenkinsSripts(facts.branchName, facts.repositoryUrl)
               
