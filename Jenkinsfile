@@ -31,7 +31,7 @@ pipeline {
           steps {
             script {
               deleteDir()
-              GatheringFacts facts = new GatheringFacts()
+              IGatheringFacts facts = new GatheringFacts()
               facts.setParams(params)
               // println(test)
 
