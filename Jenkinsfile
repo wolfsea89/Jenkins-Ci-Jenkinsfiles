@@ -33,9 +33,7 @@ pipeline {
               deleteDir()
 
               def facts = new GatheringFacts(params, env)
-              println params
-              facts.setParams(params)
-              println(facts.branchName)
+              println(facts.getProperties())
 
               // println(test)
               println("WSK1")
