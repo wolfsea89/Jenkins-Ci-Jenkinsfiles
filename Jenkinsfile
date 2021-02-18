@@ -37,6 +37,8 @@ pipeline {
                   git.checkoutApplicationRepository(facts.branchName, facts.repositoryUrl, facts.gitCredentialId)
                   git.checkoutJenkinsSripts(facts.repositoryUrl)
               
+              def appJson = readJSON file: facts.applicationJsonFile
+              println(appJson)
                   facts.readApplicationConfigurationFiles(facts.applicationJsonFile)
               println fac
               facts['applicationConfiguration'] = gatheringFacts.applicationConfiguration(env.WORKSPACE + '/' + APP_CONFIGURATION_JSON_PATH)
