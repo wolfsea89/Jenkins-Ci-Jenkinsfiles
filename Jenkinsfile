@@ -33,12 +33,12 @@ pipeline {
               deleteDir()
 
               def facts = [$class: 'GatheringFacts',
-                setBranchName: params.branch,
+                setBranchFromForm: params.branch,
                 setRepositoryUrl: params.repositoryUrl
               ]
               // facts.setBranchName(params.branch)
               // String fact = facts.branchNamePrefix
-              println(facts)
+              println(facts.branchName)
 
               // println(test)
               println("WSK1")
