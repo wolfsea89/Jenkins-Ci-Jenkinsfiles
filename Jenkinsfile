@@ -33,12 +33,8 @@ pipeline {
               deleteDir()
 
               def facts = new GatheringFacts(params, env)
-              println(facts.getProperties())
 
-              // println(test)
-              println("WSK1")
-
-              facts = gatheringFacts(params, env)
+              println(scm.doGenerateSubmoduleConfigurations)
               
               gitcheckout.application(facts.branchName, facts.repositoryUrl, env.GIT_CREDS_ID)
               gitcheckout.jenkinsSripts(JENKINSFILE_SCRIPTS_DIR)
