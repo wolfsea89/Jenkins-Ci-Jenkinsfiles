@@ -33,7 +33,6 @@ pipeline {
               deleteDir()
 
               def facts = new GatheringFacts()
-              println("WSK")
               facts.setBranchName(params.branch)
               String fact = facts.branchNamePrefix
               println(fact)
