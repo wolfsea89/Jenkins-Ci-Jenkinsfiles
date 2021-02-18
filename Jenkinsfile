@@ -38,7 +38,12 @@ pipeline {
 
               def git = new Git(this)
               println(scm.getProperties())
-              git.checkoutApplicationRepository(facts.branchName, facts.repositoryUrl)
+              git.checkoutApplicationRepository([
+                branchName: facts.branchName,
+                repositoryUrl: facts.repositoryUrl,
+                gitCredentialId: facts.gitCredentialId
+              ])
+                
               git.checkoutJenkinsSripts(facts.branchName, facts.repositoryUrl)
               
               gitcheckout.application
