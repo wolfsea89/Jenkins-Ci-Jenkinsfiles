@@ -36,7 +36,9 @@ pipeline {
               def git = new Git(this)
                   git.checkoutApplicationRepository(facts.branchName, facts.repositoryUrl, facts.gitCredentialId)
                   git.checkoutJenkinsSripts(facts.jenkinsScriptDirectory)
-              println (facts.getProperties())
+              
+              def app = readJSON file: facts.applicationJsonFile
+              println (app)
                   facts.readApplicationConfigurationFiles()
               println (facts.getProperties())
               currentBuild.displayName = "#${env.BUILD_NUMBER} - ${facts.branchName} - ${facts.version.semanticVersionWithBuildNumber}"
