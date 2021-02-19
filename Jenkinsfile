@@ -93,7 +93,7 @@ pipeline {
               }
               steps{
                 script{
-                  // println(facts.getProperties())
+                  println(facts.getProperties())
                   println("*********************************")
                   // println(facts.applicationConfiguration)
                   // prebuildScriptsDocker.setVersion(facts)
