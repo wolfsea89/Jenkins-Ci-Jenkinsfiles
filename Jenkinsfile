@@ -75,7 +75,9 @@ pipeline {
                 ],
               ])
 
-              println(facts.getProperties())
+              def a = new BranchNamePrefix(facts.branchName)
+
+              println(a.getProperties())
               println("*********************************")
               // Read application configuration in Json
               // facts.setApplicationConfiguration(readJSON(file: facts.applicationJsonFile))
