@@ -77,6 +77,7 @@ pipeline {
               println(facts.branchName)
               
               def a = new BranchNamePrefix(facts.branchName)
+              println(a.branchNamePrefix)
               println(a.getProperties())
               println("*********************************")
               // Read application configuration in Json
