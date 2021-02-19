@@ -1,6 +1,6 @@
 @Library('Sharedlibraries') import devops.ci.*
 
-def facts = new GatheringFacts()
+GatheringFacts facts = new GatheringFacts()
 
 pipeline {
   ////// SET PARAMETERS BY SEED JOB
@@ -76,9 +76,9 @@ pipeline {
               ])
 
               println(facts.branchNamePrefix)
-              println(facts.getProperties())
+              println("*********************************")
               // Read application configuration in Json
-              facts.setApplicationConfiguration(readJSON(file: facts.applicationJsonFile))
+              // facts.setApplicationConfiguration(readJSON(file: facts.applicationJsonFile))
               
               //currentBuild.displayName = "#${facts.jobBuildNumber} - ${facts.branchName} - ${facts.versionWithBuildNumber}"
             }
@@ -95,9 +95,9 @@ pipeline {
               }
               steps{
                 script{
-                  println(facts.getProperties())
+                  // println(facts.getProperties())
                   println("*********************************")
-                  println(facts.applicationConfiguration)
+                  // println(facts.applicationConfiguration)
                   // prebuildScriptsDocker.setVersion(facts)
                   // prebuildScriptsDocker.setCredentials(facts, env.BASEIMAGE_SERVICES_ADMIN_CREDS_ID)
                   // prebuildScriptsDocker.setJenkinsJobInfo(facts)
