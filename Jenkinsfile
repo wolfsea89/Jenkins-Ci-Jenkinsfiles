@@ -5,7 +5,7 @@ def facts = new GatheringFacts()
 pipeline {
   ////// SET PARAMETERS BY SEED JOB
   parameters {
-  //   string(name: 'branch', defaultValue: 'feature/create_baseimage', description: 'Branch name')
+  //   string(name: 'branchName', defaultValue: 'feature/create_baseimage', description: 'Branch name')
   //   string(name: 'repositoryUrl', defaultValue: 'git@github.com:wolfsea89/Jenkins-BaseImage.git', description: 'Repository URL (git/https)')
     string(name: 'manualVersion', defaultValue: '', description: 'Set manual version (X.Y.Z). Worked with branch release, hotfix, master without version')
   }
@@ -35,8 +35,11 @@ pipeline {
               deleteDir()
               facts.setParametersFromForm([
                 $class: 'Parameters',
-                branch: params.branch
+                branchName: params.branchName,
+                repositoryUrl: params.repositoryUrl,
+                manualVersion: params.manualVersion
               ])
+              
               println(facts.getProperties())
               def git = new Git(this)
                   git.checkoutApplicationRepository(facts.branchName, facts.repositoryUrl, facts.gitCredentialId)
