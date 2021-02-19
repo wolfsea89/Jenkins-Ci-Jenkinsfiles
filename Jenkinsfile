@@ -33,14 +33,20 @@ pipeline {
           steps {
             script {
               deleteDir()
+              
               facts.setParametersFromForm(
-                  params.branchName,
-                  params.repositoryUrl, 
-                  params.manualVersion
+                params.branchName,
+                params.repositoryUrl, 
+                params.manualVersion
+              ).setEnvironments(
+                env.JOB_BASE_NAME,
+                env.BUILD_NUMBER,
+                env.WORKSPACE,
+                env.JENKINSFILE_SCRIPTS_DIR,
+                env.GIT_CREDS_ID,
+                env.APP_CONFIGURATION_JSON_PATH
               )
-               
 
-              println(facts.branchName)
               println(facts.getProperties())
 
 
