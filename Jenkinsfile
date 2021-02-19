@@ -33,14 +33,14 @@ pipeline {
           steps {
             script {
               deleteDir()
-              facts.setParametersFromForm([
+              facts.setParametersFromForm(
                 // [
                   $class: 'devops.ci.models.Parameters',
                   branchName: params.branchName,
                   repositoryUrl: params.repositoryUrl,
                   manualVersion: params.manualVersion
                 // ]
-              ])
+              )
 
               println(facts.branchName)
               println(facts.getProperties())
