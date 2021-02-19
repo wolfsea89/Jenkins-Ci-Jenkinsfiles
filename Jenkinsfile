@@ -33,7 +33,7 @@ pipeline {
           steps {
             script {
               deleteDir()
-              Parameters a = new Parameters(
+              Parameters a = new devops.ci.models.Parameters(
                   branchName: params.branchName,
                   repositoryUrl: params.repositoryUrl, 
                   manualVersion: params.manualVersion
