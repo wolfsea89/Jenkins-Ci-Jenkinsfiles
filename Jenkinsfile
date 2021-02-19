@@ -73,12 +73,14 @@ pipeline {
                     relativeTargetDir: facts.jenkinsScriptDirectory
                   ]
                 ],
-              ]) 
+              ])
 
-              println(facts.applicationJsonFile)
+              println(facts.branchNamePrefix)
+
               // Read application configuration in Json
               facts.setApplicationConfiguration(readJSON(file: facts.applicationJsonFile))
-              currentBuild.displayName = "#${facts.jobBuildNumber} - ${facts.branchName} - ${facts.versionWithBuildNumber}"
+              
+              //currentBuild.displayName = "#${facts.jobBuildNumber} - ${facts.branchName} - ${facts.versionWithBuildNumber}"
             }
           }
         }
