@@ -34,7 +34,6 @@ pipeline {
             script {
               deleteDir()
               facts.setParametersFromForm(
-                  $class: 'Parameters',
                   branchName: params.branchName,
                   repositoryUrl: params.repositoryUrl, 
                   manualVersion: params.manualVersion
