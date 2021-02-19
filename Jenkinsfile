@@ -76,7 +76,7 @@ pipeline {
               ])
               println(facts.branchName)
               
-              def a = new BranchNamePrefix(facts.branchName)
+              def a = new CheckBranch(facts.branchName)
               println(a.branchNamePrefix)
               println(a.getProperties())
               println("*********************************")
