@@ -45,7 +45,7 @@ pipeline {
                 env.JENKINSFILE_SCRIPTS_DIR,
                 env.GIT_CREDS_ID,
                 env.APP_CONFIGURATION_JSON_PATH
-              )
+              ).createVersionWithBuildNumber()
 
               // Git clone repository with code to build
               checkout([
