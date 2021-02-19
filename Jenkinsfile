@@ -33,7 +33,7 @@ pipeline {
           steps {
             script {
               deleteDir()
-              
+
               facts.setParametersFromForm(
                 params.branchName,
                 params.repositoryUrl, 
@@ -47,18 +47,40 @@ pipeline {
                 env.APP_CONFIGURATION_JSON_PATH
               )
 
-              println(facts.getProperties())
+              // Git clone repository with code to build
+              checkout([
+                $class: 'GitSCM',
+                branches: [
+                  [ name: branchName ]
+                ],
+                userRemoteConfigs: [
+                  [
+                    url: facts.repositoryUrl,
+                    credentialsId: facts.gitCredentialId
+                  ]
+                ]
+              ])
 
+              // Git clone repository with code to build
+              checkout([
+                $class: 'GitSCM',
+                branches: scm.branches,
+                doGenerateSubmoduleConfigurations: scm.doGenerateSubmoduleConfigurations,
+                userRemoteConfigs: scm.userRemoteConfigs,
+                extensions: [
+                  [
+                    $class: 'RelativeTargetDirectory', 
+                    relativeTargetDir: facts.jenkinsScriptDirectory
+                  ]
+                ],
+              ]) 
 
-              println("*********************************")
-              def git = new Git(this)
-                  git.checkoutApplicationRepository(facts.branchName, facts.repositoryUrl, facts.gitCredentialId)
-                  git.checkoutJenkinsSripts(facts.repositoryUrl)
-              
               println(facts.applicationJsonFile)
-              def appJson = readJSON file: facts.applicationJsonFile
-              facts.setApplicationConfiguration(appJson)
-
+              // Read application configuration in Json
+              facts.setApplicationConfiguration(readJSON(file: facts.applicationJsonFile))
+              
+              println(facts.getProperties())
+              println("*********************************")
               println(facts.getProperties())
               env.facts = facts
               currentBuild.displayName = "#${facts.jobBuildNumber} - ${facts.branchName} - ${facts.versionWithBuildNumber}"
