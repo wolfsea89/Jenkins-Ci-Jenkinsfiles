@@ -42,7 +42,7 @@ pipeline {
                 ]
               ])
 
-              println(facts.branchName())
+              println(facts.branchName)
               println(facts.getProperties())
 
 
