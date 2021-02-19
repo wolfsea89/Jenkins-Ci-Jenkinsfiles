@@ -39,8 +39,11 @@ pipeline {
                 repositoryUrl: params.repositoryUrl,
                 manualVersion: params.manualVersion
               ])
-              
+
               println(facts.getProperties())
+
+
+              println("*********************************")
               def git = new Git(this)
                   git.checkoutApplicationRepository(facts.branchName, facts.repositoryUrl, facts.gitCredentialId)
                   git.checkoutJenkinsSripts(facts.repositoryUrl)
