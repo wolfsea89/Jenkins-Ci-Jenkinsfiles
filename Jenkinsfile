@@ -34,7 +34,7 @@ pipeline {
             script {
               deleteDir()
               facts.setParametersFromForm([
-                $class: Parameters,
+                $class: 'Parameters',
                 branch: params.branch
               ])
               println(facts.getProperties())
