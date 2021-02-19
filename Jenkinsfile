@@ -75,11 +75,11 @@ pipeline {
                 ],
               ])
             
-              String branchNamePrefix = new CheckBranch(this.branchName).branchNamePrefix
+              String branchNamePrefix = new CheckBranch(facts.branchName).branchNamePrefix
               
               println(branchNamePrefix)
               println("*********************************")
-              println(branchNamePrefix.getProperties())
+              println(facts.getProperties())
               // Read application configuration in Json
               // facts.setApplicationConfiguration(readJSON(file: facts.applicationJsonFile))
               
