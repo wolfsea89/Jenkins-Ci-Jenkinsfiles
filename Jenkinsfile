@@ -78,11 +78,6 @@ pipeline {
               println(facts.applicationJsonFile)
               // Read application configuration in Json
               facts.setApplicationConfiguration(readJSON(file: facts.applicationJsonFile))
-              
-              println(facts.getProperties())
-              println("*********************************")
-              println(facts.getProperties())
-              env.facts = facts
               currentBuild.displayName = "#${facts.jobBuildNumber} - ${facts.branchName} - ${facts.versionWithBuildNumber}"
             }
           }
@@ -98,6 +93,8 @@ pipeline {
               }
               steps{
                 script{
+                  println(facts.getProperties())
+                  println("*********************************")
                   println(facts.applicationConfiguration)
                   // prebuildScriptsDocker.setVersion(facts)
                   // prebuildScriptsDocker.setCredentials(facts, env.BASEIMAGE_SERVICES_ADMIN_CREDS_ID)
