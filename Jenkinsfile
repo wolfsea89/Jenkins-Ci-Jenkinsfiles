@@ -74,15 +74,11 @@ pipeline {
                   ]
                 ],
               ])
-          
-              
-              println(facts.version)
-              println("*********************************")
-              // println(facts.getProperties())
+
               // Read application configuration in Json
-              // facts.setApplicationConfiguration(readJSON(file: facts.applicationJsonFile))
-              
-              //currentBuild.displayName = "#${facts.jobBuildNumber} - ${facts.branchName} - ${facts.versionWithBuildNumber}"
+              facts.setApplicationConfiguration(readJSON(file: facts.applicationJsonFile))
+
+              currentBuild.displayName = "#${facts.jobBuildNumber} - ${facts.branchName} - ${facts.versionWithBuildNumber}"
             }
           }
         }
