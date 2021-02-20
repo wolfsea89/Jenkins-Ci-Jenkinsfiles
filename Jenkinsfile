@@ -157,7 +157,14 @@ pipeline {
                   }
                 }
               }
-              
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
               // stage('Docker publish - Snapshot'){
               //   when{
               //     expression {
@@ -181,9 +188,3 @@ pipeline {
               //     }
               //   }
               // }
-          }
-        }
-      }
-    }
-  }
-}
