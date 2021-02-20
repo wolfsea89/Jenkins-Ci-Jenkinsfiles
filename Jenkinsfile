@@ -133,15 +133,20 @@ pipeline {
             script {
               
               def publishStage = [:]
+              String artifactType
+              String repositoryType
 
               println(facts.publishRepositories)
               
               for(publishRepository in facts.publishRepositories) {
-                
+
                 publishStage["${publishRepository.publishName}"] = {
-                  println "${publishRepository}"
-                  println "${facts.artifactType}"
-                  println "${publishRepository.repositoryType}"
+                  artifactType = facts.artifactType
+                  repositoryType = publishRepository.repositoryType
+
+                  println(artifactType)
+                  println(repositoryType)
+
                   if( "${facts.artifactType}" == "${publishRepository.repositoryType}"){
                     stage("${publishRepository.publishName}") {
                       println "${facts.artifactType}"
