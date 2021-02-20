@@ -99,7 +99,7 @@ pipeline {
                   prebuild.setApplications(facts.applicationConfiguration.DOCKER_PROJECTS)
                   prebuild.setVersion(facts.versionWithBuildNumber)
                   prebuild.setAdminsCredentials(facts.baseImagesAdminCredentialsInService)
-                  prebuild.setJenkinsJobInfo(this.jobName, this.jobBuildNumber)
+                  prebuild.setJenkinsJobInfo(facts.jobName, facts.jobBuildNumber)
                   println(prebuild.getProperties())
                   prebuildScriptsDocker.execute()
                   // println(facts.getProperties())
