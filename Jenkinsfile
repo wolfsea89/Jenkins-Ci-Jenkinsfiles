@@ -130,7 +130,6 @@ pipeline {
         }
         stage('Publish') {
           steps {
-            script {
               
               def publishStage = [:]
               
@@ -143,18 +142,11 @@ pipeline {
                       println "${publishRepository.repositoryType}"
                       println("${publishRepository.publishName}")
                     } else {
-                      Utils.markStageSkippedForConditional("${publishRepository.publishName}")
                     }
                   }
-                  Utils.markStageSkippedForConditional("${publishRepository.publishName}")
-
                 }
-              
               }
-              
               parallel publishStage
-
-            }
           }
         }
         //                   println(facts.publishRepositories)
