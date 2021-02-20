@@ -136,12 +136,14 @@ pipeline {
             script {
               def publishStage = [:]
               for(publishRepository in facts.publishRepositories) {
-                publishStage["${publishRepository.RepositoryName}"] = {
-                  stage("Docker publish - ${publishRepository.RepositoryName}") {
-                    if(facts.artifactType == publishRepository.RepositoryType){
-                      println("${publishRepository.RepositoryName}")
+                publishStage["${publishRepository.repositoryName}"] = {
+                  stage("Docker publish - ${publishRepository.repositoryName}") {
+                    println "${facts.artifactType}"
+                    println "${publishRepository.repositoryType}"
+                    if( "${facts.artifactType}" == "${publishRepository.repositoryType}"){
+                      println("${publishRepository.repositoryName}")
                     } else {
-                      Utils.markStageSkippedForConditional("Docker publish - ${publishRepository.RepositoryName}")
+                      Utils.markStageSkippedForConditional("Docker publish - ${publishRepository.repositoryName}")
                     }
                   }
                 }
