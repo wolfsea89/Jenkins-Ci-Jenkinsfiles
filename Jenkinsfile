@@ -20,7 +20,7 @@ pipeline {
   //   DOCKER_REPOSITORY_URL = 'https://index.docker.io/v1/'
   //   DOCKER_REPOSITORY_SNAPSHOT_NAME = 'wolfsea89/${projectName}_snapshot'
   //   DOCKER_REPOSITORY_RELEASE_NAME = 'wolfsea89/${projectName}'
-  //   PUBLISH_REPOSITORY = <<JSON>>
+  //   PUBLISH_REPOSITORIES = <<JSON>>
   // }
   agent none
   options {
@@ -49,7 +49,7 @@ pipeline {
                 env.GIT_CREDS_ID,
                 env.APP_CONFIGURATION_JSON_PATH,
                 env.BASEIMAGE_SERVICES_ADMIN_CREDS_ID,
-                readJSON(text: env.PUBLISH_REPOSITORY)
+                readJSON(text: env.PUBLISH_REPOSITORIES)
               ).createVersionWithBuildNumber()
 
               // Git clone repository with code to build
@@ -123,7 +123,7 @@ pipeline {
                   buildDocker.setVersion(facts.versionWithBuildNumber)
                   buildDocker.buildProjects()
                   
-                  println(facts.publishRepository)
+                  println(facts.publishRepositories)
                   println(buildDocker.getProperties())
                   println("*********************************")
                 }
@@ -133,49 +133,51 @@ pipeline {
         }
         stage('Publish'){
           parallel {
-            stage('Docker publish - Release'){
-              when{
-                expression {
-                  facts.artifactType == "release" ? true : false
+            for(publishRepository in facts.publishRepositories){
+              stage('Docker publish - Release'){
+                when{
+                  expression {
+                    facts.artifactType == "release" ? true : false
+                  }
+                }
+                steps{
+                  script{
+                    dockerCi.publishBaseImage(
+                      facts.applicationConfiguration.DOCKER_PROJECTS,
+                      facts.version.semanticVersionWithBuildNumber,
+                      env.DOCKER_REPOSITORY_URL,
+                      env.DOCKER_REPOSITORY_RELEASE_NAME,
+                      env.DOCKER_REPOSITORY_CREDS_ID
+                    )
+                    dockerCi.cleanAfterBuild(
+                      facts.applicationConfiguration.DOCKER_PROJECTS,
+                      facts.version.semanticVersionWithBuildNumber,
+                      env.DOCKER_REPOSITORY_RELEASE_NAME,
+                    )
+                  }
                 }
               }
-              steps{
-                script{
-                  dockerCi.publishBaseImage(
-                    facts.applicationConfiguration.DOCKER_PROJECTS,
-                    facts.version.semanticVersionWithBuildNumber,
-                    env.DOCKER_REPOSITORY_URL,
-                    env.DOCKER_REPOSITORY_RELEASE_NAME,
-                    env.DOCKER_REPOSITORY_CREDS_ID
-                  )
-                  dockerCi.cleanAfterBuild(
-                    facts.applicationConfiguration.DOCKER_PROJECTS,
-                    facts.version.semanticVersionWithBuildNumber,
-                    env.DOCKER_REPOSITORY_RELEASE_NAME,
-                  )
+              stage('Docker publish - Snapshot'){
+                when{
+                  expression {
+                    facts.artifactType == "snapshot" ? true : false
+                  }
                 }
-              }
-            }
-            stage('Docker publish - Snapshot'){
-              when{
-                expression {
-                  facts.artifactType == "snapshot" ? true : false
-                }
-              }
-              steps{
-                script{
-                  dockerCi.publishBaseImage(
-                    facts.applicationConfiguration.DOCKER_PROJECTS,
-                    facts.version.semanticVersionWithBuildNumber,
-                    env.DOCKER_REPOSITORY_URL,
-                    env.DOCKER_REPOSITORY_SNAPSHOT_NAME,
-                    env.DOCKER_REPOSITORY_CREDS_ID
-                  )
-                  dockerCi.cleanAfterBuild(
-                    facts.applicationConfiguration.DOCKER_PROJECTS,
-                    facts.version.semanticVersionWithBuildNumber,
-                    env.DOCKER_REPOSITORY_SNAPSHOT_NAME,
-                  )
+                steps{
+                  script{
+                    dockerCi.publishBaseImage(
+                      facts.applicationConfiguration.DOCKER_PROJECTS,
+                      facts.version.semanticVersionWithBuildNumber,
+                      env.DOCKER_REPOSITORY_URL,
+                      env.DOCKER_REPOSITORY_SNAPSHOT_NAME,
+                      env.DOCKER_REPOSITORY_CREDS_ID
+                    )
+                    dockerCi.cleanAfterBuild(
+                      facts.applicationConfiguration.DOCKER_PROJECTS,
+                      facts.version.semanticVersionWithBuildNumber,
+                      env.DOCKER_REPOSITORY_SNAPSHOT_NAME,
+                    )
+                  }
                 }
               }
             }
