@@ -129,8 +129,8 @@ pipeline {
           }
         }
         stage('Publish') {
-          step {
-              
+          steps {
+              step{
               def publishStage = [:]
               
               for(publishRepository in facts.publishRepositories) {
@@ -147,6 +147,7 @@ pipeline {
                 }
               }
               parallel publishStage
+              }
           }
         }
         //                   println(facts.publishRepositories)
