@@ -99,7 +99,7 @@ pipeline {
                   prebuildScriptsDocker.setVersion(facts.versionWithBuildNumber)
                   println(prebuildScriptsDocker.getProperties())
                   prebuildScriptsDocker.execute()
-                  println(facts.getProperties())
+                  // println(facts.getProperties())
                   println("*********************************")
                 
                   // prebuildScriptsDocker.setCredentials(facts, env.BASEIMAGE_SERVICES_ADMIN_CREDS_ID)
