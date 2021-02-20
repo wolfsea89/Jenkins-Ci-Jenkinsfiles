@@ -142,26 +142,26 @@ pipeline {
 
                 println(item)
 
-                publishStage["${publishRepository.publishName}"] = {
-                  artifactType = facts.artifactType
-                  repositoryType = publishRepository.repositoryType
+                // publishStage["${publishRepository.publishName}"] = {
+                //   artifactType = facts.artifactType
+                //   repositoryType = publishRepository.repositoryType
 
-                  println(artifactType)
-                  println(repositoryType)
+                //   println(artifactType)
+                //   println(repositoryType)
 
-                  if( facts.artifactType == publishRepository.repositoryType){
-                    stage("${publishRepository.publishName}") {
-                      println "${facts.artifactType}"
-                      println "${publishRepository.repositoryType}"
-                      println("${publishRepository.publishName}")
-                    }
-                  } else {
-                    println("skip: " + publishRepository.publishName)
-                    Utils.markStageSkippedForConditional("${publishRepository.publishName}")
-                  }
-                }
+                //   if( facts.artifactType == publishRepository.repositoryType){
+                //     stage("${publishRepository.publishName}") {
+                //       println "${facts.artifactType}"
+                //       println "${publishRepository.repositoryType}"
+                //       println("${publishRepository.publishName}")
+                //     }
+                //   } else {
+                //     println("skip: " + publishRepository.publishName)
+                //     Utils.markStageSkippedForConditional("${publishRepository.publishName}")
+                //   }
+                // }
               }
-              parallel publishStage 
+              // parallel publishStage 
             }
           }
         }
