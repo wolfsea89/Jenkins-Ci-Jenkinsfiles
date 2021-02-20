@@ -1,5 +1,7 @@
 @Library('Sharedlibraries') import devops.ci.*
 
+import groovy.json.JsonSlurper
+
 GatheringFacts facts = new GatheringFacts()
 
 pipeline {
@@ -93,12 +95,13 @@ pipeline {
               steps{
                 script{
                   def prebuildScriptsDocker = new PrebuildScriptsDocker(this)
-                  prebuildScriptsDocker.setVersionFiles(facts.applicationConfiguration.DOCKER_PROJECTS, facts.versionWithBuildNumber)
+                  prebuildScriptsDocker.setApplications(facts.applicationConfiguration.DOCKER_PROJECTS)
+                  prebuildScriptsDocker.setVersion(facts.versionWithBuildNumber)
+                  println(prebuildScriptsDocker.getProperties())
+                  prebuildScriptsDocker.execute()
                   println(facts.getProperties())
                   println("*********************************")
-                  
-                  
-                  // prebuildScriptsDocker.setVersion(facts)
+                
                   // prebuildScriptsDocker.setCredentials(facts, env.BASEIMAGE_SERVICES_ADMIN_CREDS_ID)
                   // prebuildScriptsDocker.setJenkinsJobInfo(facts)
                 }
