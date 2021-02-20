@@ -138,7 +138,9 @@ pipeline {
 
               println(facts.publishRepositories)
               
-              for(publishRepository in facts.publishRepositories) {
+              for(item in facts.publishRepositories.size) {
+
+                println(item)
 
                 publishStage["${publishRepository.publishName}"] = {
                   artifactType = facts.artifactType
