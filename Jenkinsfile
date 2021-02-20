@@ -122,7 +122,7 @@ pipeline {
                   def buildDocker = new DockerBuild(this)
                   buildDocker.setApplications(facts.applicationConfiguration.DOCKER_PROJECTS)
                   buildDocker.setVersion(facts.versionWithBuildNumber)
-                  // buildDocker.buildProjects()
+                  buildDocker.buildProjects()
                 }
               }
             }
@@ -137,15 +137,14 @@ pipeline {
               for(publishRepository in facts.publishRepositories) {
                 
                 publishStage["${publishRepository.publishName}"] = {
-                  if( "${facts.artifactType}" == "${publishRepository.repositoryType}"){
-                    stage("${publishRepository.publishName}") {
+                  stage("${publishRepository.publishName}") {
+                    if( "${facts.artifactType}" == "${publishRepository.repositoryType}"){
                       println "${facts.artifactType}"
                       println "${publishRepository.repositoryType}"
                       println("${publishRepository.publishName}")
+                    } else {
+                      // Utils.markStageSkippedForConditional("${publishRepository.publishName}")
                     }
-                  } else {
-                    stage("${publishRepository.publishName}"){}
-                    Utils.markStageSkippedForConditional("${publishRepository.publishName}")
                   }
 
                 }
