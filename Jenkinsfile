@@ -95,10 +95,11 @@ pipeline {
               }
               steps{
                 script{
-                  def prebuild = new prebuild(this)
+                  def prebuild = new PrebuildScriptsDocker(this)
                   prebuild.setApplications(facts.applicationConfiguration.DOCKER_PROJECTS)
                   prebuild.setVersion(facts.versionWithBuildNumber)
                   prebuild.setAdminsCredentials(facts.baseImagesAdminCredentialsInService)
+                  prebuild.setJenkinsJobInfo(this.jobName, this.jobBuildNumber)
                   println(prebuild.getProperties())
                   prebuildScriptsDocker.execute()
                   // println(facts.getProperties())
