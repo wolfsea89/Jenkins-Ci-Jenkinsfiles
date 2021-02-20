@@ -101,7 +101,7 @@ pipeline {
                   prebuild.setAdminsCredentials(facts.baseImagesAdminCredentialsInService)
                   prebuild.setJenkinsJobInfo(facts.jobName, facts.jobBuildNumber)
                   println(prebuild.getProperties())
-                  prebuildScriptsDocker.execute()
+                  prebuild.execute()
                   // println(facts.getProperties())
                   println("*********************************")
                   // prebuildScriptsDocker.setJenkinsJobInfo(facts)
