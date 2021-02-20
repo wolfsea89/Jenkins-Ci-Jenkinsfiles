@@ -1,6 +1,7 @@
 @Library('Sharedlibraries') import devops.ci.*
 
 import groovy.json.JsonSlurper
+import org.jenkinsci.plugins.pipeline.modeldefinition.Utils
 
 GatheringFacts facts = new GatheringFacts()
 
@@ -134,9 +135,13 @@ pipeline {
         stage('Publish') {
           steps {
             script {
+              
               def publishStage = [:]
+              
               for(publishRepository in facts.publishRepositories) {
+                
                 publishStage["${publishRepository.repositoryName}"] = {
+
                   stage("Docker publish - ${publishRepository.repositoryName}") {
                     println "${facts.artifactType}"
                     println "${publishRepository.repositoryType}"
@@ -146,9 +151,13 @@ pipeline {
                       Utils.markStageSkippedForConditional("Docker publish - ${publishRepository.repositoryName}")
                     }
                   }
+
                 }
+              
               }
+              
               parallel publishStage
+
             }
           }
         }
