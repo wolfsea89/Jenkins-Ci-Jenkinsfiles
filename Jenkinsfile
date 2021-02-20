@@ -87,7 +87,6 @@ pipeline {
             stage('Docker'){
               when{
                 expression {
-                  true
                   facts.applicationConfiguration.DOCKER_PROJECTS ? true : false
                 }
               }
