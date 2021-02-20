@@ -138,14 +138,13 @@ pipeline {
               for(publishRepository in facts.publishRepositories) {
                 publishStage["${publishRepository.RepositoryName}"] = {
                   stage("Docker publish - ${publishRepository.RepositoryName}") {
-                    when{
-                      expression {
-                         facts.artifactType == publishRepository.RepositoryType ? true : false
-                      }
-                     }
                     steps{
                       script{
-                        println("${publishRepository.RepositoryName}")
+                        if(facts.artifactType == publishRepository.RepositoryType){
+                          println("${publishRepository.RepositoryName}")
+                        } else {
+                           Utils.markStageSkippedForConditional("Docker publish - ${publishRepository.RepositoryName}")
+                        }
                       }
                     }
                   }
