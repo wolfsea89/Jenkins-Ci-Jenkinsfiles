@@ -146,6 +146,7 @@ pipeline {
                       Utils.markStageSkippedForConditional("${publishRepository.publishName}")
                     }
                   }
+                  Utils.markStageSkippedForConditional("${publishRepository.publishName}")
 
                 }
               
