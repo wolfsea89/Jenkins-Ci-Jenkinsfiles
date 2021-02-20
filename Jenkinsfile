@@ -123,10 +123,6 @@ pipeline {
                   buildDocker.setApplications(facts.applicationConfiguration.DOCKER_PROJECTS)
                   buildDocker.setVersion(facts.versionWithBuildNumber)
                   buildDocker.buildProjects()
-                  
-                  println(facts.publishRepositories)
-                  println(buildDocker.getProperties())
-                  println("*********************************")
                 }
               }
             }
@@ -155,14 +151,15 @@ pipeline {
                 }
               
               }
-
-              println(publishStage)
               
               parallel publishStage
 
             }
           }
         }
+        //                   println(facts.publishRepositories)
+        //           println(buildDocker.getProperties())
+        //           println("*********************************")
         // stage('Publish'){
         //   stages{
         //     for(publishRepository in facts.publishRepositories){
