@@ -132,18 +132,20 @@ pipeline {
           }
         }
         stage('Publish') {
-                script {
-                    def tests = [:]
-                    for(publishRepository in facts.publishRepositories) {
-                        tests["${publishRepository.RepositoryName}"] = {
-                            stage("${f}") {
-                                    echo '${f}'
-                              }
-                            }
-                        }
-                    }
-                    parallel tests
+          steps {
+            script {
+              def tests = [:]
+              for(publishRepository in facts.publishRepositories) {
+                tests["${publishRepository.RepositoryName}"] = {
+                  stage("${f}") {
+                    echo '${f}'
+                  }
+                }
+              }
             }
+          }
+          parallel tests
+        }
         // stage('Publish'){
         //   stages{
         //     for(publishRepository in facts.publishRepositories){
