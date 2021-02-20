@@ -134,9 +134,9 @@ pipeline {
         stage('Publish') {
           steps {
             script {
-              def publish = [:]
+              def publishStage = [:]
               for(publishRepository in facts.publishRepositories) {
-                publish["${publishRepository.RepositoryName}"] = {
+                publishStage["${publishRepository.RepositoryName}"] = {
                   stage("Docker publish - ${publishRepository.RepositoryName}") {
                     when{
                       expression {
@@ -151,7 +151,7 @@ pipeline {
                   }
                 }
               }
-              parallel tests
+              parallel publishStage
             }
           }
         }
