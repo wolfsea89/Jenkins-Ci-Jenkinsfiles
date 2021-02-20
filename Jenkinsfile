@@ -142,8 +142,8 @@ pipeline {
                   }
                 }
               }
+              parallel tests
             }
-            parallel tests
           }
         }
         // stage('Publish'){
