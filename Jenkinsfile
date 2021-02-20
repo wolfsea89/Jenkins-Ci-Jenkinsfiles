@@ -100,11 +100,7 @@ pipeline {
                   prebuild.setVersion(facts.versionWithBuildNumber)
                   prebuild.setAdminsCredentials(facts.baseImagesAdminCredentialsInService)
                   prebuild.setJenkinsJobInfo(facts.jobName, facts.jobBuildNumber)
-                  println(prebuild.getProperties())
                   prebuild.execute()
-                  // println(facts.getProperties())
-                  println("*********************************")
-                  // prebuildScriptsDocker.setJenkinsJobInfo(facts)
                 }
               }
             }
@@ -120,10 +116,13 @@ pipeline {
               }
               steps{
                 script{
-                  dockerCi.buildProjects(
-                    facts.applicationConfiguration.DOCKER_PROJECTS,
-                    facts.version.semanticVersionWithBuildNumber
-                  )
+                  def buildDocker = new DockerCi(this)
+                  buildDocker.setApplications(facts.applicationConfiguration.DOCKER_PROJECTS)
+                  buildDocker.setVersion(facts.versionWithBuildNumber)
+                  buildDocker.buildProjects()
+                  
+                  println(buildDocker.getProperties())
+                  println("*********************************")
                 }
               }
             }
