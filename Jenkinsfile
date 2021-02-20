@@ -95,17 +95,14 @@ pipeline {
               }
               steps{
                 script{
-                  def prebuildScriptsDocker = new PrebuildScriptsDocker(this)
-                  prebuildScriptsDocker.setApplications(facts.applicationConfiguration.DOCKER_PROJECTS)
-                  prebuildScriptsDocker.setVersion(facts.versionWithBuildNumber)
-                  println(facts.baseImagesAdminCredentialsInService)
-                  prebuildScriptsDocker.setAdminsCredentials(facts.baseImagesAdminCredentialsInService)
-                  println(prebuildScriptsDocker.getProperties())
+                  def prebuild = new prebuild(this)
+                  prebuild.setApplications(facts.applicationConfiguration.DOCKER_PROJECTS)
+                  prebuild.setVersion(facts.versionWithBuildNumber)
+                  prebuild.setAdminsCredentials(facts.baseImagesAdminCredentialsInService)
+                  println(prebuild.getProperties())
                   prebuildScriptsDocker.execute()
                   // println(facts.getProperties())
                   println("*********************************")
-                
-                  // prebuildScriptsDocker.setCredentials(facts, env.BASEIMAGE_SERVICES_ADMIN_CREDS_ID)
                   // prebuildScriptsDocker.setJenkinsJobInfo(facts)
                 }
               }
