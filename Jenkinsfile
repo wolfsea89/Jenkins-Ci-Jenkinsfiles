@@ -46,7 +46,8 @@ pipeline {
                 env.WORKSPACE,
                 env.JENKINSFILE_SCRIPTS_DIR,
                 env.GIT_CREDS_ID,
-                env.APP_CONFIGURATION_JSON_PATH
+                env.APP_CONFIGURATION_JSON_PATH,
+                env.BASEIMAGE_SERVICES_ADMIN_CREDS_ID
               ).createVersionWithBuildNumber()
 
               // Git clone repository with code to build
@@ -97,6 +98,7 @@ pipeline {
                   def prebuildScriptsDocker = new PrebuildScriptsDocker(this)
                   prebuildScriptsDocker.setApplications(facts.applicationConfiguration.DOCKER_PROJECTS)
                   prebuildScriptsDocker.setVersion(facts.versionWithBuildNumber)
+                  prebuildScriptsDocker.setAdminsCredentials(facts.baseImagesAdminCredentialsInService)
                   println(prebuildScriptsDocker.getProperties())
                   prebuildScriptsDocker.execute()
                   // println(facts.getProperties())
