@@ -129,7 +129,7 @@ pipeline {
           }
         }
         stage('Publish') {
-          steps {
+          step {
               
               def publishStage = [:]
               
