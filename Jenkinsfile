@@ -133,6 +133,8 @@ pipeline {
             script {
               
               def publishStage = [:]
+
+              println(facts.publishRepositories)
               
               for(publishRepository in facts.publishRepositories) {
                 
