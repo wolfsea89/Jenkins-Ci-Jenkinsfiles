@@ -156,6 +156,8 @@ pipeline {
                 }
               
               }
+
+              println(publishStage)
               
               parallel publishStage
 
