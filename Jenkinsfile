@@ -137,6 +137,8 @@ pipeline {
               for(publishRepository in facts.publishRepositories) {
                 
                 publishStage["${publishRepository.publishName}"] = {
+                  println "${facts.artifactType}"
+                  println "${publishRepository.repositoryType}"
                   if( "${facts.artifactType}" == "${publishRepository.repositoryType}"){
                     stage("${publishRepository.publishName}") {
                       println "${facts.artifactType}"
