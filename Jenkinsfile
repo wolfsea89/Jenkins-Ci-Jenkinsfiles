@@ -134,11 +134,20 @@ pipeline {
         stage('Publish') {
           steps {
             script {
-              def tests = [:]
+              def publish = [:]
               for(publishRepository in facts.publishRepositories) {
-                tests["${publishRepository.RepositoryName}"] = {
-                  stage("${f}") {
-                    echo '${f}'
+                publish["${publishRepository.RepositoryName}"] = {
+                  stage("Docker publish - ${publishRepository.RepositoryName}") {
+                    when{
+                      expression {
+                         facts.artifactType == publishRepository.RepositoryType ? true : false
+                      }
+                     }
+                    steps{
+                      script{
+                        println("${publishRepository.RepositoryName}")
+                      }
+                    }
                   }
                 }
               }
