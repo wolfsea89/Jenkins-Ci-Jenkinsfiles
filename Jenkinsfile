@@ -132,55 +132,46 @@ pipeline {
           }
         }
         stage('Publish'){
-          parallel {
-            for(publishRepository in facts.publishRepositories){
-              stage('Docker publish - Release'){
+          for(publishRepository in facts.publishRepositories){
+            publish["${publishRepository.RepositoryName}"] = {
+              stage('Docker publish - ${publishRepository.RepositoryName}'){
                 when{
                   expression {
-                    facts.artifactType == "release" ? true : false
+                    facts.artifactType == publishRepository.RepositoryType ? true : false
                   }
                 }
                 steps{
                   script{
-                    dockerCi.publishBaseImage(
-                      facts.applicationConfiguration.DOCKER_PROJECTS,
-                      facts.version.semanticVersionWithBuildNumber,
-                      env.DOCKER_REPOSITORY_URL,
-                      env.DOCKER_REPOSITORY_RELEASE_NAME,
-                      env.DOCKER_REPOSITORY_CREDS_ID
-                    )
-                    dockerCi.cleanAfterBuild(
-                      facts.applicationConfiguration.DOCKER_PROJECTS,
-                      facts.version.semanticVersionWithBuildNumber,
-                      env.DOCKER_REPOSITORY_RELEASE_NAME,
-                    )
-                  }
-                }
-              }
-              stage('Docker publish - Snapshot'){
-                when{
-                  expression {
-                    facts.artifactType == "snapshot" ? true : false
-                  }
-                }
-                steps{
-                  script{
-                    dockerCi.publishBaseImage(
-                      facts.applicationConfiguration.DOCKER_PROJECTS,
-                      facts.version.semanticVersionWithBuildNumber,
-                      env.DOCKER_REPOSITORY_URL,
-                      env.DOCKER_REPOSITORY_SNAPSHOT_NAME,
-                      env.DOCKER_REPOSITORY_CREDS_ID
-                    )
-                    dockerCi.cleanAfterBuild(
-                      facts.applicationConfiguration.DOCKER_PROJECTS,
-                      facts.version.semanticVersionWithBuildNumber,
-                      env.DOCKER_REPOSITORY_SNAPSHOT_NAME,
-                    )
+                      println "WSK"
                   }
                 }
               }
             }
+          }
+          parallel publish
+              // stage('Docker publish - Snapshot'){
+              //   when{
+              //     expression {
+              //       facts.artifactType == "snapshot" ? true : false
+              //     }
+              //   }
+              //   steps{
+              //     script{
+              //       dockerCi.publishBaseImage(
+              //         facts.applicationConfiguration.DOCKER_PROJECTS,
+              //         facts.version.semanticVersionWithBuildNumber,
+              //         env.DOCKER_REPOSITORY_URL,
+              //         env.DOCKER_REPOSITORY_SNAPSHOT_NAME,
+              //         env.DOCKER_REPOSITORY_CREDS_ID
+              //       )
+              //       dockerCi.cleanAfterBuild(
+              //         facts.applicationConfiguration.DOCKER_PROJECTS,
+              //         facts.version.semanticVersionWithBuildNumber,
+              //         env.DOCKER_REPOSITORY_SNAPSHOT_NAME,
+              //       )
+              //     }
+              //   }
+              // }
           }
         }
       }
