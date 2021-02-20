@@ -147,7 +147,7 @@ pipeline {
                   println(artifactType)
                   println(repositoryType)
 
-                  if( "${facts.artifactType}" == "${publishRepository.repositoryType}"){
+                  if( facts.artifactType == publishRepository.repositoryType){
                     stage("${publishRepository.publishName}") {
                       println "${facts.artifactType}"
                       println "${publishRepository.repositoryType}"
