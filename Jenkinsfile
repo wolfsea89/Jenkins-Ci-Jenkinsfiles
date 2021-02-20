@@ -143,10 +143,9 @@ pipeline {
                 publishStage["${publishRepository.publishName}"] = {
 
                   stage("${publishRepository.publishName}") {
-                    println "${facts.artifactType}"
-                    println "${publishRepository.publishName}"
-                    println "${publishRepository.repositoryType}"
                     if( "${facts.artifactType}" == "${publishRepository.repositoryType}"){
+                      println "${facts.artifactType}"
+                      println "${publishRepository.repositoryType}"
                       println("${publishRepository.publishName}")
                     } else {
                       Utils.markStageSkippedForConditional("${publishRepository.publishName}")
