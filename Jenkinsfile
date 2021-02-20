@@ -20,6 +20,7 @@ pipeline {
   //   DOCKER_REPOSITORY_URL = 'https://index.docker.io/v1/'
   //   DOCKER_REPOSITORY_SNAPSHOT_NAME = 'wolfsea89/${projectName}_snapshot'
   //   DOCKER_REPOSITORY_RELEASE_NAME = 'wolfsea89/${projectName}'
+  //   PUBLISH_REPOSITORY = <<JSON>>
   // }
   agent none
   options {
@@ -47,7 +48,8 @@ pipeline {
                 env.JENKINSFILE_SCRIPTS_DIR,
                 env.GIT_CREDS_ID,
                 env.APP_CONFIGURATION_JSON_PATH,
-                env.BASEIMAGE_SERVICES_ADMIN_CREDS_ID
+                env.BASEIMAGE_SERVICES_ADMIN_CREDS_ID,
+                readJSON text: env.PUBLISH_REPOSITORY
               ).createVersionWithBuildNumber()
 
               // Git clone repository with code to build
@@ -121,7 +123,7 @@ pipeline {
                   buildDocker.setVersion(facts.versionWithBuildNumber)
                   buildDocker.buildProjects()
                   
-                  println(env.TEST)
+                  println(facts.publishRepository)
                   println(buildDocker.getProperties())
                   println("*********************************")
                 }
