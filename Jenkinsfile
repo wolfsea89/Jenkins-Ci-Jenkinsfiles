@@ -141,16 +141,16 @@ pipeline {
               for(repository in facts.publishRepositories) {
 
                 if(facts.artifactType == repository.repositoryType ){
-                  publishStage["${publishRepository.publishName}"] = {
-                    stage("${publishRepository.publishName}") {
+                  publishStage["${repository.publishName}"] = {
+                    stage("${repository.publishName}") {
                       println "${facts.artifactType}"
-                      println "${publishRepository.repositoryType}"
-                      println("${publishRepository.publishName}")
+                      println "${repository.repositoryType}"
+                      println("${repository.publishName}")
                     }
                   }
                 } else {
-                  publishStage["${publishRepository.publishName}"] = {
-                    Utils.markStageSkippedForConditional("${publishRepository.publishName}")
+                  publishStage["${repository.publishName}"] = {
+                    Utils.markStageSkippedForConditional("${repository.publishName}")
                   }
                   println("skip: "+ repository.repositoryName)
                 }
