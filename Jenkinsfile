@@ -132,7 +132,6 @@ pipeline {
           }
         }
         stage('Publish') {
-            steps {
                 script {
                     def tests = [:]
                     for(publishRepository in facts.publishRepositories) {
@@ -144,7 +143,6 @@ pipeline {
                         }
                     }
                     parallel tests
-                }
             }
         // stage('Publish'){
         //   stages{
