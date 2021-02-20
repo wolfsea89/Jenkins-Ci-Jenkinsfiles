@@ -143,7 +143,7 @@ pipeline {
                       println "${publishRepository.repositoryType}"
                       println("${publishRepository.publishName}")
                     } else {
-                      // Utils.markStageSkippedForConditional("${publishRepository.publishName}")
+                      Utils.markStageSkippedForConditional("${publishRepository.publishName}")
                     }
                   }
 
