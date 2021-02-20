@@ -116,11 +116,12 @@ pipeline {
               }
               steps{
                 script{
-                  def buildDocker = new DockerCi(this)
+                  def buildDocker = new DockerBuild(this)
                   buildDocker.setApplications(facts.applicationConfiguration.DOCKER_PROJECTS)
                   buildDocker.setVersion(facts.versionWithBuildNumber)
                   buildDocker.buildProjects()
                   
+                  println(env.TEST)
                   println(buildDocker.getProperties())
                   println("*********************************")
                 }
