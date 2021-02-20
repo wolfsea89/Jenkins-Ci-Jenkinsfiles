@@ -154,6 +154,7 @@ pipeline {
                       println("${publishRepository.publishName}")
                     }
                   } else {
+                    println("skip: " + publishRepository.publishName)
                     Utils.markStageSkippedForConditional("${publishRepository.publishName}")
                   }
                 }
