@@ -175,7 +175,7 @@ pipeline {
                 //   }
                 // }
               }
-              // parallel publishStage 
+              parallel publishStage 
             }
           }
         }
