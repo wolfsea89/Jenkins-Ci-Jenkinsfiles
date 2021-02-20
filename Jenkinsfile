@@ -131,7 +131,7 @@ pipeline {
             }
           }
         }
-        stages('Publish'){
+        stages{
             for(publishRepository in facts.publishRepositories){
               stage('Docker publish - ${publishRepository.RepositoryName}'){
                 when{
