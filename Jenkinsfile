@@ -131,6 +131,7 @@ pipeline {
             }
           }
         }
+        stage('Publish'){
         parallel {
           stage('Publish'){
             for(publishRepository in facts.publishRepositories){
@@ -159,7 +160,7 @@ pipeline {
               }
             }
           }
-        }
+        }}
       }
     }
   }
