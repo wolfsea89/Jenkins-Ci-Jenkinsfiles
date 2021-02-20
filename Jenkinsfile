@@ -92,9 +92,12 @@ pipeline {
               }
               steps{
                 script{
+                  def prebuildScriptsDocker = new PrebuildScriptsDocker(this)
+                  prebuildScriptsDocker.setVersionFiles(facts.applicationConfiguration.DOCKER_PROJECTS, facts.versionWithBuildNumber)
                   println(facts.getProperties())
                   println("*********************************")
-                  // println(facts.applicationConfiguration)
+                  
+                  
                   // prebuildScriptsDocker.setVersion(facts)
                   // prebuildScriptsDocker.setCredentials(facts, env.BASEIMAGE_SERVICES_ADMIN_CREDS_ID)
                   // prebuildScriptsDocker.setJenkinsJobInfo(facts)
