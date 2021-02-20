@@ -149,9 +149,9 @@ pipeline {
                     }
                   }
                 } else {
-                  // publishStage["${repository.publishName}"] = {
+                  publishStage["${repository.publishName}"] = {
                     Utils.markStageSkippedForConditional("${repository.publishName}")
-                  // }
+                  }
                   println("skip: "+ repository.repositoryName)
                 }
                 
