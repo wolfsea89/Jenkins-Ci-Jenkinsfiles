@@ -131,35 +131,50 @@ pipeline {
             }
           }
         }
-        stage('Publish'){
-          stages{
-            for(publishRepository in facts.publishRepositories){
-              stage('Docker publish - ${publishRepository.RepositoryName}'){
-                when{
-                  expression {
-                    facts.artifactType == publishRepository.RepositoryType ? true : false
-                  }
+        stage('Publish') {
+            steps {
+                script {
+                    def tests = [:]
+                    for(publishRepository in facts.publishRepositories) {
+                        tests["${publishRepository.RepositoryName}"] = {
+                            stage("${f}") {
+                                    echo '${f}'
+                              }
+                            }
+                        }
+                    }
+                    parallel tests
                 }
-                steps{
-                  script{
-                    dockerCi.publishBaseImage(
-                      facts.applicationConfiguration.DOCKER_PROJECTS,
-                      facts.version.semanticVersionWithBuildNumber,
-                      env.DOCKER_REPOSITORY_URL,
-                      env.DOCKER_REPOSITORY_RELEASE_NAME,
-                      env.DOCKER_REPOSITORY_CREDS_ID
-                    )
-                    dockerCi.cleanAfterBuild(
-                      facts.applicationConfiguration.DOCKER_PROJECTS,
-                      facts.version.semanticVersionWithBuildNumber,
-                      env.DOCKER_REPOSITORY_RELEASE_NAME,
-                    )
-                  }
-                }
-              }
             }
-          }
-        }
+        // stage('Publish'){
+        //   stages{
+        //     for(publishRepository in facts.publishRepositories){
+        //       stage('Docker publish - ${publishRepository.RepositoryName}'){
+        //         when{
+        //           expression {
+        //             facts.artifactType == publishRepository.RepositoryType ? true : false
+        //           }
+        //         }
+        //         steps{
+        //           script{
+        //             dockerCi.publishBaseImage(
+        //               facts.applicationConfiguration.DOCKER_PROJECTS,
+        //               facts.version.semanticVersionWithBuildNumber,
+        //               env.DOCKER_REPOSITORY_URL,
+        //               env.DOCKER_REPOSITORY_RELEASE_NAME,
+        //               env.DOCKER_REPOSITORY_CREDS_ID
+        //             )
+        //             dockerCi.cleanAfterBuild(
+        //               facts.applicationConfiguration.DOCKER_PROJECTS,
+        //               facts.version.semanticVersionWithBuildNumber,
+        //               env.DOCKER_REPOSITORY_RELEASE_NAME,
+        //             )
+        //           }
+        //         }
+        //       }
+        //     }
+        //   }
+        // }
       }
     }
   }
