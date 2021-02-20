@@ -122,7 +122,7 @@ pipeline {
                   def buildDocker = new DockerBuild(this)
                   buildDocker.setApplications(facts.applicationConfiguration.DOCKER_PROJECTS)
                   buildDocker.setVersion(facts.versionWithBuildNumber)
-                  buildDocker.buildProjects()
+                  // buildDocker.buildProjects()
                 }
               }
             }
@@ -144,9 +144,8 @@ pipeline {
                       println("${publishRepository.publishName}")
                     }
                   } else {
-                    stage("${publishRepository.publishName}"){
-                      Utils.markStageSkippedForConditional("${publishRepository.publishName}")
-                    }
+                    stage("${publishRepository.publishName}"){}
+                    Utils.markStageSkippedForConditional("${publishRepository.publishName}")
                   }
 
                 }
