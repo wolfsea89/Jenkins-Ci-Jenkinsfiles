@@ -131,58 +131,60 @@ pipeline {
           }
         }
         stage('Publish') {
-          parallel {
-            stage('DockerHub - Release'){
-              when{
-                expression {
-                  def isDockerProject = (facts.applicationConfiguration.DOCKER_PROJECTS) ? true : false
-                  def isReleaseArtefact = (facts.artifactType == "release") ? true : false
-                  (isDockerProject && isReleaseArtefact) ? true : false
+          steps{
+            parallel {
+              stage('DockerHub - Release'){
+                when{
+                  expression {
+                    def isDockerProject = (facts.applicationConfiguration.DOCKER_PROJECTS) ? true : false
+                    def isReleaseArtefact = (facts.artifactType == "release") ? true : false
+                    (isDockerProject && isReleaseArtefact) ? true : false
+                  }
+                }
+                steps{
+                  script{
+                    def repository = facts.publishRepositories.DockerHubRelease
+                    def publishDocker = new DockerPublish(this)
+                    publishDocker.setApplications(facts.applicationConfiguration.DOCKER_PROJECTS)
+                    publishDocker.setVersion(facts.versionWithBuildNumber)
+                    publishDocker.publish(repository.repositoryUrl, repository.repositoryName, repository.repositoryCredentialID)
+                  }
                 }
               }
-              steps{
-                script{
-                  def repository = facts.publishRepositories.DockerHubRelease
-                  def publishDocker = new DockerPublish(this)
-                  publishDocker.setApplications(facts.applicationConfiguration.DOCKER_PROJECTS)
-                  publishDocker.setVersion(facts.versionWithBuildNumber)
-                  publishDocker.publish(repository.repositoryUrl, repository.repositoryName, repository.repositoryCredentialID)
+              stage('DockerHub - Snapshot'){
+                when{
+                  expression {
+                    def isDockerProject = (facts.applicationConfiguration.DOCKER_PROJECTS) ? true : false
+                    def isReleaseArtefact = (facts.artifactType == "snapshot") ? true : false
+                    (isDockerProject && isReleaseArtefact) ? true : false
+                  }
+                }
+                steps{
+                  script{
+                    def repository = facts.publishRepositories.DockerHubSnapshot
+                    def publishDocker = new DockerPublish(this)
+                    publishDocker.setApplications(facts.applicationConfiguration.DOCKER_PROJECTS)
+                    publishDocker.setVersion(facts.versionWithBuildNumber)
+                    publishDocker.publish(repository.repositoryUrl, repository.repositoryName, repository.repositoryCredentialID)
+                  }
                 }
               }
-            }
-            stage('DockerHub - Snapshot'){
-              when{
-                expression {
-                  def isDockerProject = (facts.applicationConfiguration.DOCKER_PROJECTS) ? true : false
-                  def isReleaseArtefact = (facts.artifactType == "snapshot") ? true : false
-                  (isDockerProject && isReleaseArtefact) ? true : false
+              stage('GitHub - Release'){
+                when{
+                  expression {
+                    def isDockerProject = (facts.applicationConfiguration.DOCKER_PROJECTS) ? true : false
+                    def isReleaseArtefact = (facts.artifactType == "release") ? true : false
+                    (isDockerProject && isReleaseArtefact) ? true : false
+                  }
                 }
-              }
-              steps{
-                script{
-                  def repository = facts.publishRepositories.DockerHubSnapshot
-                  def publishDocker = new DockerPublish(this)
-                  publishDocker.setApplications(facts.applicationConfiguration.DOCKER_PROJECTS)
-                  publishDocker.setVersion(facts.versionWithBuildNumber)
-                  publishDocker.publish(repository.repositoryUrl, repository.repositoryName, repository.repositoryCredentialID)
-                }
-              }
-            }
-            stage('GitHub - Release'){
-              when{
-                expression {
-                  def isDockerProject = (facts.applicationConfiguration.DOCKER_PROJECTS) ? true : false
-                  def isReleaseArtefact = (facts.artifactType == "release") ? true : false
-                  (isDockerProject && isReleaseArtefact) ? true : false
-                }
-              }
-              steps{
-                script{
-                  def repository = facts.publishRepositories.GitHubRelease
-                  def publishDocker = new DockerPublish(this)
-                  publishDocker.setApplications(facts.applicationConfiguration.DOCKER_PROJECTS)
-                  publishDocker.setVersion(facts.versionWithBuildNumber)
-                  publishDocker.publish(repository.repositoryUrl, repository.repositoryName, repository.repositoryCredentialID)
+                steps{
+                  script{
+                    def repository = facts.publishRepositories.GitHubRelease
+                    def publishDocker = new DockerPublish(this)
+                    publishDocker.setApplications(facts.applicationConfiguration.DOCKER_PROJECTS)
+                    publishDocker.setVersion(facts.versionWithBuildNumber)
+                    publishDocker.publish(repository.repositoryUrl, repository.repositoryName, repository.repositoryCredentialID)
+                  }
                 }
               }
             }
@@ -190,13 +192,10 @@ pipeline {
           post{
             always{
               script{
-                def repository = facts.publishRepositories
                 def publishDocker = new DockerPublish(this)
                 publishDocker.setApplications(facts.applicationConfiguration.DOCKER_PROJECTS)
                 publishDocker.setVersion(facts.versionWithBuildNumber)
-                publishDocker.clean(repository.DockerHubRelease.repositoryName)
-                publishDocker.clean(repository.DockerHubSnapshot.repositoryName)
-                publishDocker.clean(repository.GitHubRelease.repositoryName)
+                publishDocker.clean(repository.repositoryName)
               }
             }
           }
