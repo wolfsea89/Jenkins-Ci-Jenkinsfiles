@@ -168,7 +168,7 @@ pipeline {
                 }
               }
             }
-            stage('GitHubRelease'){
+            stage('GitHub - Release'){
               when{
                 expression {
                   def isDockerProject = (facts.applicationConfiguration.DOCKER_PROJECTS) ? true : false
