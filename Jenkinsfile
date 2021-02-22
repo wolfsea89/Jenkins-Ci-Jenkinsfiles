@@ -185,13 +185,13 @@ pipeline {
                   publishDocker.publish(repository.repositoryUrl, repository.repositoryName, repository.repositoryCredentialID)
                 }
               }
-            }
-            post{
-              always{
-                def publishDocker = new DockerPublish(this)
-                publishDocker.setApplications(facts.applicationConfiguration.DOCKER_PROJECTS)
-                publishDocker.setVersion(facts.versionWithBuildNumber)
-                publishDocker.clean(repository.repositoryName)
+              post{
+                always{
+                  def publishDocker = new DockerPublish(this)
+                  publishDocker.setApplications(facts.applicationConfiguration.DOCKER_PROJECTS)
+                  publishDocker.setVersion(facts.versionWithBuildNumber)
+                  publishDocker.clean(repository.repositoryName)
+                }
               }
             }
           }
