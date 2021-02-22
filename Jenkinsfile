@@ -129,56 +129,77 @@ pipeline {
           }
         }
         stage('Publish') {
-          steps {
-            script {
-              
-              def publishStage = [:]
-              String artifactType
-              String repositoryType
-
-              println(facts.publishRepositories)
-              
-              for(repository in facts.publishRepositories) {
-
-                if(facts.artifactType == repository.repositoryType ){
-                  publishStage[repository.publishName] = {
-                    stage("${repository.publishName}") {
-                      println(facts.artifactType)
-                      println(repository.repositoryType)
-                      println(repository.publishName)
-                    }
-                  }
-                } else {
-                  publishStage["${repository.publishName}"] = {
-                    Utils.markStageSkippedForConditional(repository.publishName)
-                  }
-                  println("skip: "+ repository.repositoryName)
+          parallel {
+            stage('DockerHub - Release'){
+              when{
+                expression {
+                  def isDockerProject = (facts.applicationConfiguration.DOCKER_PROJECTS) ? true : false
+                  def isReleaseArtefact = (facts.artifactType == "replace") ? true : false
+                  (isDockerProject && isReleaseArtefact) ? true : false
                 }
-                
-
-                // publishStage["${publishRepository.publishName}"] = {
-                //   artifactType = facts.artifactType
-                //   repositoryType = publishRepository.repositoryType
-
-                //   println(artifactType)
-                //   println(repositoryType)
-
-                //   if( facts.artifactType == publishRepository.repositoryType){
-                //     stage("${publishRepository.publishName}") {
-                //       println "${facts.artifactType}"
-                //       println "${publishRepository.repositoryType}"
-                //       println("${publishRepository.publishName}")
-                //     }
-                //   } else {
-                //     println("skip: " + publishRepository.publishName)
-                //     Utils.markStageSkippedForConditional("${publishRepository.publishName}")
-                //   }
-                // }
               }
-              parallel publishStage 
+              steps{
+                script{
+                  def repository = facts.publishRepositories
+                  def publishDocker = new DockerPublish(this)
+                  publishDocker.setApplications(facts.applicationConfiguration.DOCKER_PROJECTS)
+                  publishDocker.setVersion(facts.versionWithBuildNumber)
+                  publishDocker.publish(repository.repositoryUrl, repository.repositoryName, repository.repositoryCredentialID)
+                }
+              }
             }
           }
         }
+          // steps {
+          //   script {
+              
+          //     def publishStage = [:]
+          //     String artifactType
+          //     String repositoryType
+
+          //     println(facts.publishRepositories)
+              
+          //     for(repository in facts.publishRepositories) {
+
+          //       if(facts.artifactType == repository.repositoryType ){
+          //         publishStage[repository.publishName] = {
+          //           stage("${repository.publishName}") {
+          //             println(facts.artifactType)
+          //             println(repository.repositoryType)
+          //             println(repository.publishName)
+          //           }
+          //         }
+          //       } else {
+          //         publishStage["${repository.publishName}"] = {
+          //           Utils.markStageSkippedForConditional(repository.publishName)
+          //         }
+          //         println("skip: "+ repository.repositoryName)
+          //       }
+                
+
+          //       // publishStage["${publishRepository.publishName}"] = {
+          //       //   artifactType = facts.artifactType
+          //       //   repositoryType = publishRepository.repositoryType
+
+          //       //   println(artifactType)
+          //       //   println(repositoryType)
+
+          //       //   if( facts.artifactType == publishRepository.repositoryType){
+          //       //     stage("${publishRepository.publishName}") {
+          //       //       println "${facts.artifactType}"
+          //       //       println "${publishRepository.repositoryType}"
+          //       //       println("${publishRepository.publishName}")
+          //       //     }
+          //       //   } else {
+          //       //     println("skip: " + publishRepository.publishName)
+          //       //     Utils.markStageSkippedForConditional("${publishRepository.publishName}")
+          //       //   }
+          //       // }
+          //     }
+          //     parallel publishStage 
+          //   }
+          // }
+        // }
         //                   println(facts.publishRepositories)
         //           println(buildDocker.getProperties())
         //           println("*********************************")
