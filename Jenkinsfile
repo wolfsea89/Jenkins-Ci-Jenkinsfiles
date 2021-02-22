@@ -124,7 +124,7 @@ pipeline {
                   buildDocker.setVersion(facts.versionWithBuildNumber)
                   buildDocker.buildProjects()
                   def isReleaseArtefact = (facts.artifactType == "release") ? true : false
-                  println(isReleaseArtefact)
+                  println(facts.artifactType)
                 }
               }
             }
@@ -143,6 +143,42 @@ pipeline {
               steps{
                 script{
                   def repository = facts.publishRepositories.DockerHubRelease
+                  def publishDocker = new DockerPublish(this)
+                  publishDocker.setApplications(facts.applicationConfiguration.DOCKER_PROJECTS)
+                  publishDocker.setVersion(facts.versionWithBuildNumber)
+                  publishDocker.publish(repository.repositoryUrl, repository.repositoryName, repository.repositoryCredentialID)
+                }
+              }
+            }
+            stage('DockerHub - Snapshot'){
+              when{
+                expression {
+                  def isDockerProject = (facts.applicationConfiguration.DOCKER_PROJECTS) ? true : false
+                  def isReleaseArtefact = (facts.artifactType == "snapshot") ? true : false
+                  (isDockerProject && isReleaseArtefact) ? true : false
+                }
+              }
+              steps{
+                script{
+                  def repository = facts.publishRepositories.DockerHubSnapshot
+                  def publishDocker = new DockerPublish(this)
+                  publishDocker.setApplications(facts.applicationConfiguration.DOCKER_PROJECTS)
+                  publishDocker.setVersion(facts.versionWithBuildNumber)
+                  publishDocker.publish(repository.repositoryUrl, repository.repositoryName, repository.repositoryCredentialID)
+                }
+              }
+            }
+            stage('GitHubRelease'){
+              when{
+                expression {
+                  def isDockerProject = (facts.applicationConfiguration.DOCKER_PROJECTS) ? true : false
+                  def isReleaseArtefact = (facts.artifactType == "release") ? true : false
+                  (isDockerProject && isReleaseArtefact) ? true : false
+                }
+              }
+              steps{
+                script{
+                  def repository = facts.publishRepositories.GitHubRelease
                   def publishDocker = new DockerPublish(this)
                   publishDocker.setApplications(facts.applicationConfiguration.DOCKER_PROJECTS)
                   publishDocker.setVersion(facts.versionWithBuildNumber)
