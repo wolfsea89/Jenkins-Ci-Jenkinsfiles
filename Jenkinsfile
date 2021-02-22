@@ -123,8 +123,6 @@ pipeline {
                   buildDocker.setApplications(facts.applicationConfiguration.DOCKER_PROJECTS)
                   buildDocker.setVersion(facts.versionWithBuildNumber)
                   buildDocker.buildProjects()
-                  def isReleaseArtefact = (facts.artifactType == "release") ? true : false
-                  println(facts.artifactType)
                 }
               }
             }
@@ -149,6 +147,13 @@ pipeline {
                   publishDocker.publish(repository.repositoryUrl, repository.repositoryName, repository.repositoryCredentialID)
                 }
               }
+              post{
+                always{
+                  script{
+                    publishDocker.clean(repository.repositoryName)
+                  }
+                }
+              }
             }
             stage('DockerHub - Snapshot'){
               when{
@@ -165,6 +170,13 @@ pipeline {
                   publishDocker.setApplications(facts.applicationConfiguration.DOCKER_PROJECTS)
                   publishDocker.setVersion(facts.versionWithBuildNumber)
                   publishDocker.publish(repository.repositoryUrl, repository.repositoryName, repository.repositoryCredentialID)
+                }
+              }
+              post{
+                always{
+                  script{
+                    publishDocker.clean(repository.repositoryName)
+                  }
                 }
               }
             }
