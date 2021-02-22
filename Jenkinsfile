@@ -187,10 +187,12 @@ pipeline {
               }
               post{
                 always{
-                  def publishDocker = new DockerPublish(this)
-                  publishDocker.setApplications(facts.applicationConfiguration.DOCKER_PROJECTS)
-                  publishDocker.setVersion(facts.versionWithBuildNumber)
-                  publishDocker.clean(repository.repositoryName)
+                  script{
+                    def publishDocker = new DockerPublish(this)
+                    publishDocker.setApplications(facts.applicationConfiguration.DOCKER_PROJECTS)
+                    publishDocker.setVersion(facts.versionWithBuildNumber)
+                    publishDocker.clean(repository.repositoryName)
+                  }
                 }
               }
             }
