@@ -182,6 +182,9 @@ pipeline {
                   def publishDocker = new DockerPublish(this)
                   publishDocker.setApplications(facts.applicationConfiguration.DOCKER_PROJECTS)
                   publishDocker.setVersion(facts.versionWithBuildNumber)
+                  println(repository.repositoryUrl)
+                  println(repository.repositoryName)
+                  println(repository.repositoryCredentialID)
                   publishDocker.publish(repository.repositoryUrl, repository.repositoryName, repository.repositoryCredentialID)
                 }
               }
