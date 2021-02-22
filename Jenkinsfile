@@ -123,6 +123,8 @@ pipeline {
                   buildDocker.setApplications(facts.applicationConfiguration.DOCKER_PROJECTS)
                   buildDocker.setVersion(facts.versionWithBuildNumber)
                   buildDocker.buildProjects()
+                  def isReleaseArtefact = (facts.artifactType == "release") ? true : false
+                  println(isReleaseArtefact)
                 }
               }
             }
