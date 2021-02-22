@@ -134,7 +134,7 @@ pipeline {
               when{
                 expression {
                   def isDockerProject = (facts.applicationConfiguration.DOCKER_PROJECTS) ? true : false
-                  def isReleaseArtefact = (facts.artifactType == "replace") ? true : false
+                  def isReleaseArtefact = (facts.artifactType == "release") ? true : false
                   (isDockerProject && isReleaseArtefact) ? true : false
                 }
               }
