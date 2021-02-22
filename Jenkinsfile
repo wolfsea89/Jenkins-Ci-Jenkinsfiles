@@ -133,8 +133,8 @@ pipeline {
             stage('DockerHub - Release'){
               when{
                 expression {
-                  def isDockerProject = (facts.applicationConfiguration.DOCKER_PROJECTS) ? true : false
-                  def isReleaseArtefact = (facts.artifactType == "release") ? true : false
+                  Boolean isDockerProject = (facts.applicationConfiguration.DOCKER_PROJECTS) ? true : false
+                  Boolean isReleaseArtefact = (facts.artifactType == "release") ? true : false
                   (isDockerProject && isReleaseArtefact) ? true : false
                 }
               }
@@ -151,8 +151,8 @@ pipeline {
             stage('DockerHub - Snapshot'){
               when{
                 expression {
-                  def isDockerProject = (facts.applicationConfiguration.DOCKER_PROJECTS) ? true : false
-                  def isReleaseArtefact = (facts.artifactType == "snapshot") ? true : false
+                  Boolean isDockerProject = (facts.applicationConfiguration.DOCKER_PROJECTS) ? true : false
+                  Boolean isReleaseArtefact = (facts.artifactType == "snapshot") ? true : false
                   (isDockerProject && isReleaseArtefact) ? true : false
                 }
               }
@@ -169,8 +169,8 @@ pipeline {
             stage('GitHubRelease'){
               when{
                 expression {
-                  def isDockerProject = (facts.applicationConfiguration.DOCKER_PROJECTS) ? true : false
-                  def isReleaseArtefact = (facts.artifactType == "release") ? true : false
+                  Boolean isDockerProject = (facts.applicationConfiguration.DOCKER_PROJECTS) ? true : false
+                  Boolean isReleaseArtefact = (facts.artifactType == "release") ? true : false
                   (isDockerProject && isReleaseArtefact) ? true : false
                 }
               }
@@ -183,20 +183,6 @@ pipeline {
                   publishDocker.publish(repository.repositoryUrl, repository.repositoryName, repository.repositoryCredentialID)
                 }
               }
-              // post{
-              //   always{
-              //     script{
-              //       def repository = facts.publishRepositories
-              //       def publishDocker = new DockerPublish(this)
-              //       publishDocker.setApplications(facts.applicationConfiguration.DOCKER_PROJECTS)
-              //       publishDocker.setVersion(facts.versionWithBuildNumber)
-              //       publishDocker.clean()
-              //       publishDocker.clean(repository.DockerHubRelease.repositoryName)
-              //       publishDocker.clean(repository.DockerHubSnapshot.repositoryName)
-              //       publishDocker.clean(repository.GitHubRelease.repositoryName)
-              //     }
-              //   }
-              // }
             }
           }
         }

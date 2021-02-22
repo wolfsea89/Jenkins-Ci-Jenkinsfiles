@@ -1,8 +1,0 @@
-[
-  {
-    "name": "Jenkins-BaseImage-from-seedJob",
-    "jobType": "Build",
-    "defaultBranch": "develop",
-    "repositoryUrl": "git@github.com:wolfsea89/Jenkins-BaseImage.git"
-  }
-]
