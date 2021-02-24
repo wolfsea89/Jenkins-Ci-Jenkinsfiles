@@ -52,6 +52,7 @@ pipeline {
                 env.BASEIMAGE_SERVICES_ADMIN_CREDS_ID,
                 readJSON(text: env.PUBLISH_REPOSITORIES)
               ).createVersionWithBuildNumber()
+              println(facts)
 
               // Git clone repository with code to build
               checkout([
@@ -83,7 +84,7 @@ pipeline {
 
               // Read application configuration in Json
               facts.setApplicationConfiguration(readJSON(file: facts.applicationJsonFile))
-              println(facts)
+
 
               currentBuild.displayName = "${facts.jobBuildNumber} - ${facts.branchName} - ${facts.versionWithBuildNumber}"
             }
