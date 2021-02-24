@@ -1,28 +1,31 @@
-library identifier: 'Jenkins-Sharedlibraries@master', retriever: modernSCM([
-  $class: 'GitSCMSource',
-  remote: 'git@github.com:wolfsea89/Jenkins-Sharedlibraries.git',
-  credentialsId: 'github'
-])
+@Library('Sharedlibraries') import devops.ci.*
+
+import groovy.json.JsonSlurper
+import org.jenkinsci.plugins.pipeline.modeldefinition.Utils
+
+GatheringFacts facts = new GatheringFacts()
 
 pipeline {
+  ////// SET PARAMETERS BY SEED JOB
   parameters {
-    string(name: 'branch', defaultValue: 'feature/create_baseimage', description: 'Branch name')
-    string(name: 'repositoryUrl', defaultValue: 'git@github.com:wolfsea89/Jenkins-BaseImage.git', description: 'Repository URL (git/https)')
+  //   string(name: 'branchName', defaultValue: 'feature/create_baseimage', description: 'Branch name')
+  //   string(name: 'repositoryUrl', defaultValue: 'git@github.com:wolfsea89/Jenkins-BaseImage.git', description: 'Repository URL (git/https)')
     string(name: 'manualVersion', defaultValue: '', description: 'Set manual version (X.Y.Z). Worked with branch release, hotfix, master without version')
   }
+  // environment {
+  //   JENKINSFILE_SCRIPTS_DIR = '.jenkins'
+  //   GIT_CREDS_ID = 'github'
+  //   APP_CONFIGURATION_JSON_PATH = 'configuration/jenkins.json'
+  //   BASEIMAGE_SERVICES_ADMIN_CREDS_ID = 'baseImage_services_AminPassword'
+  //   DOCKER_REPOSITORY_CREDS_ID = 'docker_hub'
+  //   DOCKER_REPOSITORY_URL = 'https://index.docker.io/v1/'
+  //   DOCKER_REPOSITORY_SNAPSHOT_NAME = 'wolfsea89/${projectName}_snapshot'
+  //   DOCKER_REPOSITORY_RELEASE_NAME = 'wolfsea89/${projectName}'
+  //   PUBLISH_REPOSITORIES = <<JSON>>
+  // }
   agent none
   options {
     skipDefaultCheckout true
-  }
-  environment {
-    JENKINSFILE_SCRIPTS_DIR = '.jenkins'
-    GIT_CREDS_ID = 'github'
-    APP_CONFIGURATION_JSON_PATH = 'configuration/jenkins.json'
-    BASEIMAGE_SERVICES_ADMIN_CREDS_ID = 'baseImage_services_AminPassword'
-    DOCKER_REPOSITORY_CREDS_ID = 'docker_hub'
-    DOCKER_REPOSITORY_URL = 'https://index.docker.io/v1/'
-    DOCKER_REPOSITORY_SNAPSHOT_NAME = 'wolfsea89/${projectName}_snapshot'
-    DOCKER_REPOSITORY_RELEASE_NAME = 'wolfsea89/${projectName}'
   }
   stages{
     stage('Continuous Integration') {
@@ -34,16 +37,55 @@ pipeline {
           steps {
             script {
               deleteDir()
-              facts = gatheringFacts(params, env)
-              println(facts)
-              
-              gitcheckout.application(facts.branchName, facts.repositoryUrl, env.GIT_CREDS_ID)
-              gitcheckout.jenkinsSripts(JENKINSFILE_SCRIPTS_DIR)
-              
-              facts['applicationConfiguration'] = gatheringFacts.applicationConfiguration(env.WORKSPACE + '/' + APP_CONFIGURATION_JSON_PATH)
-              currentBuild.displayName = "#${env.BUILD_NUMBER} - ${facts.branchName} - ${facts.version.semanticVersionWithBuildNumber}"
-              env.facts = facts
 
+              facts.setParametersFromForm(
+                params.branchName,
+                params.repositoryUrl, 
+                params.manualVersion
+              ).setEnvironments(
+                env.JOB_BASE_NAME,
+                env.BUILD_NUMBER,
+                env.WORKSPACE,
+                env.JENKINSFILE_SCRIPTS_DIR,
+                env.GIT_CREDS_ID,
+                env.APP_CONFIGURATION_JSON_PATH,
+                env.BASEIMAGE_SERVICES_ADMIN_CREDS_ID,
+                readJSON(text: env.PUBLISH_REPOSITORIES)
+              ).createVersionWithBuildNumber()
+
+              // Git clone repository with code to build
+              checkout([
+                $class: 'GitSCM',
+                branches: [
+                  [ name: branchName ]
+                ],
+                userRemoteConfigs: [
+                  [
+                    url: facts.repositoryUrl,
+                    credentialsId: facts.gitCredentialId
+                  ]
+                ]
+              ])
+
+              // Git clone repository with code to build
+              checkout([
+                $class: 'GitSCM',
+                branches: scm.branches,
+                doGenerateSubmoduleConfigurations: scm.doGenerateSubmoduleConfigurations,
+                userRemoteConfigs: scm.userRemoteConfigs,
+                extensions: [
+                  [
+                    $class: 'RelativeTargetDirectory', 
+                    relativeTargetDir: facts.jenkinsScriptDirectory
+                  ]
+                ],
+              ])
+
+              // Read application configuration in Json
+              facts.setApplicationConfiguration(readJSON(file: facts.applicationJsonFile))
+
+
+              currentBuild.displayName = "${facts.jobBuildNumber} - ${facts.branchName} - ${facts.versionWithBuildNumber}"
             }
           }
         }
@@ -57,9 +99,12 @@ pipeline {
               }
               steps{
                 script{
-                  prebuildScriptsDocker.setVersion(facts)
-                  prebuildScriptsDocker.setCredentials(facts, env.BASEIMAGE_SERVICES_ADMIN_CREDS_ID)
-                  prebuildScriptsDocker.setJenkinsJobInfo(facts)
+                  def prebuild = new PrebuildScriptsDocker(this)
+                  prebuild.setApplications(facts.applicationConfiguration.DOCKER_PROJECTS)
+                  prebuild.setVersion(facts.versionWithBuildNumber)
+                  prebuild.setAdminsCredentials(facts.baseImagesAdminCredentialsInService)
+                  prebuild.setJenkinsJobInfo(facts.jobName, facts.jobBuildNumber)
+                  prebuild.execute()
                 }
               }
             }
@@ -75,69 +120,86 @@ pipeline {
               }
               steps{
                 script{
-                  dockerCi.buildProjects(
-                    facts.applicationConfiguration.DOCKER_PROJECTS,
-                    facts.version.semanticVersionWithBuildNumber
-                  )
+                  def buildDocker = new DockerBuild(this)
+                  buildDocker.setApplications(facts.applicationConfiguration.DOCKER_PROJECTS)
+                  buildDocker.setVersion(facts.versionWithBuildNumber)
+                  buildDocker.buildProjects()
                 }
               }
             }
           }
         }
-        stage('Publish'){
+        stage('Publish') {
           parallel {
-            stage('Docker publish - Release'){
+            stage('DockerHub - Release'){
               when{
                 expression {
-                  facts.artifactType == "release" ? true : false
+                  Boolean isDockerProject = (facts.applicationConfiguration.DOCKER_PROJECTS) ? true : false
+                  Boolean isReleaseArtefact = (facts.artifactType == "release") ? true : false
+                  (isDockerProject && isReleaseArtefact) ? true : false
                 }
               }
               steps{
                 script{
-                  dockerCi.publishBaseImage(
-                    facts.applicationConfiguration.DOCKER_PROJECTS,
-                    facts.version.semanticVersionWithBuildNumber,
-                    env.DOCKER_REPOSITORY_URL,
-                    env.DOCKER_REPOSITORY_RELEASE_NAME,
-                    env.DOCKER_REPOSITORY_CREDS_ID
-                  )
-                  dockerCi.cleanAfterBuild(
-                    facts.applicationConfiguration.DOCKER_PROJECTS,
-                    facts.version.semanticVersionWithBuildNumber,
-                    env.DOCKER_REPOSITORY_RELEASE_NAME,
-                  )
+                  def repository = facts.publishRepositories.DockerHubRelease
+                  def publishDocker = new DockerPublish(this)
+                  publishDocker.setApplications(facts.applicationConfiguration.DOCKER_PROJECTS)
+                  publishDocker.setVersion(facts.versionWithBuildNumber)
+                  publishDocker.publish(repository.repositoryUrl, repository.repositoryName, repository.repositoryCredentialID)
                 }
               }
             }
-            stage('Docker publish - Snapshot'){
+            stage('DockerHub - Snapshot'){
               when{
                 expression {
-                  facts.artifactType == "snapshot" ? true : false
+                  Boolean isDockerProject = (facts.applicationConfiguration.DOCKER_PROJECTS) ? true : false
+                  Boolean isReleaseArtefact = (facts.artifactType == "snapshot") ? true : false
+                  (isDockerProject && isReleaseArtefact) ? true : false
                 }
               }
               steps{
                 script{
-                  dockerCi.publishBaseImage(
-                    facts.applicationConfiguration.DOCKER_PROJECTS,
-                    facts.version.semanticVersionWithBuildNumber,
-                    env.DOCKER_REPOSITORY_URL,
-                    env.DOCKER_REPOSITORY_SNAPSHOT_NAME,
-                    env.DOCKER_REPOSITORY_CREDS_ID
-                  )
-                  dockerCi.cleanAfterBuild(
-                    facts.applicationConfiguration.DOCKER_PROJECTS,
-                    facts.version.semanticVersionWithBuildNumber,
-                    env.DOCKER_REPOSITORY_SNAPSHOT_NAME,
-                  )
+                  def repository = facts.publishRepositories.DockerHubSnapshot
+                  def publishDocker = new DockerPublish(this)
+                  publishDocker.setApplications(facts.applicationConfiguration.DOCKER_PROJECTS)
+                  publishDocker.setVersion(facts.versionWithBuildNumber)
+                  publishDocker.publish(repository.repositoryUrl, repository.repositoryName, repository.repositoryCredentialID)
+                }
+              }
+            }
+            stage('GitHubRelease'){
+              when{
+                expression {
+                  Boolean isDockerProject = (facts.applicationConfiguration.DOCKER_PROJECTS) ? true : false
+                  Boolean isReleaseArtefact = (facts.artifactType == "release") ? true : false
+                  (isDockerProject && isReleaseArtefact) ? true : false
+                }
+              }
+              steps{
+                script{
+                  def repository = facts.publishRepositories.GitHubRelease
+                  def publishDocker = new DockerPublish(this)
+                  publishDocker.setApplications(facts.applicationConfiguration.DOCKER_PROJECTS)
+                  publishDocker.setVersion(facts.versionWithBuildNumber)
+                  publishDocker.publish(repository.repositoryUrl, repository.repositoryName, repository.repositoryCredentialID)
                 }
               }
             }
           }
         }
       }
-      post {
-        always {
-          deleteDir()
+      post{
+        always{
+          script{
+            def repository = facts.publishRepositories
+            def publishDocker = new DockerPublish(this)
+            publishDocker.setApplications(facts.applicationConfiguration.DOCKER_PROJECTS)
+            publishDocker.setVersion(facts.versionWithBuildNumber)
+            publishDocker.clean()
+            publishDocker.clean(repository.DockerHubRelease.repositoryName)
+            publishDocker.clean(repository.DockerHubSnapshot.repositoryName)
+            publishDocker.clean(repository.GitHubRelease.repositoryName)
+          }
         }
       }
     }
