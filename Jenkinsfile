@@ -52,7 +52,7 @@ pipeline {
                 env.BASEIMAGE_SERVICES_ADMIN_CREDS_ID,
                 readJSON(text: env.PUBLISH_REPOSITORIES)
               ).createVersionWithBuildNumber()
-              println(facts.branchNamePrefix)
+
               // Git clone repository with code to build
               checkout([
                 $class: 'GitSCM',
