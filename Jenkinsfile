@@ -53,7 +53,6 @@ pipeline {
                 readJSON(text: env.PUBLISH_REPOSITORIES)
               ).createVersionWithBuildNumber()
               println(facts)
-
               // Git clone repository with code to build
               checkout([
                 $class: 'GitSCM',
