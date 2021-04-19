@@ -42,8 +42,6 @@ pipeline {
                 readJSON(text: env.PUBLISH_REPOSITORIES)
               ).createVersionWithBuildNumber()
 
-              println(facts.workspace)
-
               // Git clone repository with code to build
               checkout([
                 $class: 'GitSCM',
@@ -71,7 +69,7 @@ pipeline {
                   ]
                 ],
               ])
-              println(facts)
+              println(facts.jenkinsScriptDirectory)
 
               // Read application configuration in Json
               facts.setApplicationConfiguration(readJSON(file: facts.applicationJsonFile))
