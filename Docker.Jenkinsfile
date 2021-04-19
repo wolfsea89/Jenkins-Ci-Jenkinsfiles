@@ -158,6 +158,7 @@ pipeline {
               }
               steps{
                 script{
+                  println("WSK")
                   def repository = facts.publishRepositories.DockerHubSnapshot
                   def publishDocker = new DockerPublish(this)
                   publishDocker.setApplications(facts.applicationConfiguration.DOCKER_PROJECTS)
