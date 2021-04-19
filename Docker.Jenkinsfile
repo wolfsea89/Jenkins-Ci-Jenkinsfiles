@@ -98,7 +98,7 @@ pipeline {
               }
               steps{
                 script{
-                  def prebuild = new PrebuildScriptsDotnet(this)
+                  def prebuild = new PrebuildScriptsDocker(this)
                   prebuild.setApplications(facts.applicationConfiguration.DOCKER_PROJECTS)
                   prebuild.setVersion(facts.versionWithBuildNumber)
                   prebuild.setAdminsCredentials(facts.baseImagesAdminCredentialsInService)
