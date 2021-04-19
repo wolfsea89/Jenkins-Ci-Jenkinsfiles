@@ -12,17 +12,6 @@ pipeline {
   //   string(name: 'repositoryUrl', defaultValue: 'git@github.com:wolfsea89/Jenkins-BaseImage.git', description: 'Repository URL (git/https)')
     string(name: 'manualVersion', defaultValue: '', description: 'Set manual version (X.Y.Z). Worked with branch release, hotfix, master without version')
   }
-  // environment {
-  //   JENKINSFILE_SCRIPTS_DIR = '.jenkins'
-  //   GIT_CREDS_ID = 'github'
-  //   APP_CONFIGURATION_JSON_PATH = 'configuration/jenkins.json'
-  //   BASEIMAGE_SERVICES_ADMIN_CREDS_ID = 'baseImage_services_AminPassword'
-  //   DOCKER_REPOSITORY_CREDS_ID = 'docker_hub'
-  //   DOCKER_REPOSITORY_URL = 'https://index.docker.io/v1/'
-  //   DOCKER_REPOSITORY_SNAPSHOT_NAME = 'wolfsea89/${projectName}_snapshot'
-  //   DOCKER_REPOSITORY_RELEASE_NAME = 'wolfsea89/${projectName}'
-  //   PUBLISH_REPOSITORIES = <<JSON>>
-  // }
   agent none
   options {
     skipDefaultCheckout true
@@ -84,6 +73,7 @@ pipeline {
               // Read application configuration in Json
               facts.setApplicationConfiguration(readJSON(file: facts.applicationJsonFile))
 
+
               currentBuild.displayName = "${facts.jobBuildNumber} - ${facts.branchName} - ${facts.versionWithBuildNumber}"
             }
           }
@@ -98,10 +88,9 @@ pipeline {
               }
               steps{
                 script{
-                  def prebuild = new PrebuildScriptsDotnet(this)
+                  def prebuild = new PrebuildScriptsDocker(this)
                   prebuild.setApplications(facts.applicationConfiguration.DOCKER_PROJECTS)
                   prebuild.setVersion(facts.versionWithBuildNumber)
-                  prebuild.setAdminsCredentials(facts.baseImagesAdminCredentialsInService)
                   prebuild.setJenkinsJobInfo(facts.jobName, facts.jobBuildNumber)
                   prebuild.execute()
                 }
