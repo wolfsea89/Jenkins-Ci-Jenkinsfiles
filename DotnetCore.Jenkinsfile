@@ -73,7 +73,7 @@ pipeline {
               // Read application configuration in Json
               facts.setApplicationConfiguration(readJSON(file: facts.applicationJsonFile))
 
-              println(facts.applicationConfiguration)
+              println(facts.applicationJsonFile)
 
               currentBuild.displayName = "${facts.jobBuildNumber} - ${facts.branchName} - ${facts.versionWithBuildNumber}"
             }
