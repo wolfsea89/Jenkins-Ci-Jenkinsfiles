@@ -83,7 +83,7 @@ pipeline {
             stage('Docker'){
               when{
                 expression {
-                  facts.applicationConfiguration.DOCKER_PROJECTS ? true : false
+                  facts.applicationConfiguration.DOTNET_CORE_PROJECTS ? true : false
                 }
               }
               steps{
