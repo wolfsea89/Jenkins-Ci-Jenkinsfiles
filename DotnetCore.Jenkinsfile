@@ -73,15 +73,13 @@ pipeline {
               // Read application configuration in Json
               facts.setApplicationConfiguration(readJSON(file: facts.applicationJsonFile))
 
-              println(facts.applicationJsonFile)
-
               currentBuild.displayName = "${facts.jobBuildNumber} - ${facts.branchName} - ${facts.versionWithBuildNumber}"
             }
           }
         }
         stage('Prebuild Scripts') {
           parallel {
-            stage('Docker'){
+            stage('Dotnet Core'){
               when{
                 expression {
                   facts.applicationConfiguration.DOTNET_CORE_PROJECTS ? true : false
@@ -89,7 +87,7 @@ pipeline {
               }
               steps{
                 script{
-                  def prebuild = new PrebuildScriptsDocker(this)
+                  def prebuild = new PrebuildScriptsDotnetCore(this)
                   prebuild.setApplications(facts.applicationConfiguration.DOTNET_CORE_PROJECTS)
                   prebuild.setVersion(facts.versionWithBuildNumber)
                   prebuild.setJenkinsJobInfo(facts.jobName, facts.jobBuildNumber)
