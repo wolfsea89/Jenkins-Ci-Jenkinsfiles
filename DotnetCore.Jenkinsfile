@@ -89,7 +89,7 @@ pipeline {
               steps{
                 script{
                   def prebuild = new PrebuildScriptsDocker(this)
-                  prebuild.setApplications(facts.applicationConfiguration.DOCKER_PROJECTS)
+                  prebuild.setApplications(facts.applicationConfiguration.DOTNET_CORE_PROJECTS)
                   prebuild.setVersion(facts.versionWithBuildNumber)
                   prebuild.setJenkinsJobInfo(facts.jobName, facts.jobBuildNumber)
                   prebuild.execute()
@@ -103,13 +103,13 @@ pipeline {
             stage('Docker'){
               when{
                 expression {
-                  facts.applicationConfiguration.DOCKER_PROJECTS ? true : false
+                  facts.applicationConfiguration.DOTNET_CORE_PROJECTS ? true : false
                 }
               }
               steps{
                 script{
                   def buildDocker = new DockerBuild(this)
-                  buildDocker.setApplications(facts.applicationConfiguration.DOCKER_PROJECTS)
+                  buildDocker.setApplications(facts.applicationConfiguration.DOTNET_CORE_PROJECTS)
                   buildDocker.setVersion(facts.versionWithBuildNumber)
                   buildDocker.buildProjects()
                 }
@@ -122,7 +122,7 @@ pipeline {
             stage('DockerHub - Release'){
               when{
                 expression {
-                  Boolean isDockerProject = (facts.applicationConfiguration.DOCKER_PROJECTS) ? true : false
+                  Boolean isDockerProject = (facts.applicationConfiguration.DOTNET_CORE_PROJECTS) ? true : false
                   Boolean isReleaseArtefact = (facts.artifactType == "release") ? true : false
                   (isDockerProject && isReleaseArtefact) ? true : false
                 }
@@ -131,7 +131,7 @@ pipeline {
                 script{
                   def repository = facts.publishRepositories.DockerHubRelease
                   def publishDocker = new DockerPublish(this)
-                  publishDocker.setApplications(facts.applicationConfiguration.DOCKER_PROJECTS)
+                  publishDocker.setApplications(facts.applicationConfiguration.DOTNET_CORE_PROJECTS)
                   publishDocker.setVersion(facts.versionWithBuildNumber)
                   publishDocker.publish(repository.repositoryUrl, repository.repositoryName, repository.repositoryCredentialID)
                 }
@@ -140,7 +140,7 @@ pipeline {
             stage('DockerHub - Snapshot'){
               when{
                 expression {
-                  Boolean isDockerProject = (facts.applicationConfiguration.DOCKER_PROJECTS) ? true : false
+                  Boolean isDockerProject = (facts.applicationConfiguration.DOTNET_CORE_PROJECTS) ? true : false
                   Boolean isReleaseArtefact = (facts.artifactType == "snapshot") ? true : false
                   (isDockerProject && isReleaseArtefact) ? true : false
                 }
@@ -149,7 +149,7 @@ pipeline {
                 script{
                   def repository = facts.publishRepositories.DockerHubSnapshot
                   def publishDocker = new DockerPublish(this)
-                  publishDocker.setApplications(facts.applicationConfiguration.DOCKER_PROJECTS)
+                  publishDocker.setApplications(facts.applicationConfiguration.DOTNET_CORE_PROJECTS)
                   publishDocker.setVersion(facts.versionWithBuildNumber)
                   publishDocker.publish(repository.repositoryUrl, repository.repositoryName, repository.repositoryCredentialID)
                 }
@@ -158,7 +158,7 @@ pipeline {
             stage('GitHubRelease'){
               when{
                 expression {
-                  Boolean isDockerProject = (facts.applicationConfiguration.DOCKER_PROJECTS) ? true : false
+                  Boolean isDockerProject = (facts.applicationConfiguration.DOTNET_CORE_PROJECTS) ? true : false
                   Boolean isReleaseArtefact = (facts.artifactType == "release") ? true : false
                   (isDockerProject && isReleaseArtefact) ? true : false
                 }
@@ -167,7 +167,7 @@ pipeline {
                 script{
                   def repository = facts.publishRepositories.GitHubRelease
                   def publishDocker = new DockerPublish(this)
-                  publishDocker.setApplications(facts.applicationConfiguration.DOCKER_PROJECTS)
+                  publishDocker.setApplications(facts.applicationConfiguration.DOTNET_CORE_PROJECTS)
                   publishDocker.setVersion(facts.versionWithBuildNumber)
                   publishDocker.publish(repository.repositoryUrl, repository.repositoryName, repository.repositoryCredentialID)
                 }
@@ -181,7 +181,7 @@ pipeline {
           script{
             def repository = facts.publishRepositories
             def publishDocker = new DockerPublish(this)
-            publishDocker.setApplications(facts.applicationConfiguration.DOCKER_PROJECTS)
+            publishDocker.setApplications(facts.applicationConfiguration.DOTNET_CORE_PROJECTS)
             publishDocker.setVersion(facts.versionWithBuildNumber)
             publishDocker.clean()
             publishDocker.clean(repository.DockerHubRelease.repositoryName)
