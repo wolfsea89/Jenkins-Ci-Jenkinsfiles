@@ -42,7 +42,7 @@ pipeline {
                 readJSON(text: env.PUBLISH_REPOSITORIES)
               ).createVersionWithBuildNumber()
 
-              println(facts.getProperties())
+              println(facts.workspace)
 
               // Git clone repository with code to build
               checkout([
