@@ -69,12 +69,11 @@ pipeline {
                   ]
                 ],
               ])
-              println(facts.jenkinsScriptDirectory)
 
               // Read application configuration in Json
               facts.setApplicationConfiguration(readJSON(file: facts.applicationJsonFile))
 
-              println(facts)
+              println(facts.applicationConfiguration)
 
               currentBuild.displayName = "${facts.jobBuildNumber} - ${facts.branchName} - ${facts.versionWithBuildNumber}"
             }
