@@ -40,7 +40,7 @@ pipeline {
 
               facts.setParametersFromForm(
                 params.branchName,
-                params.repositoryUrl, 
+                params.repositoryUrl,
                 params.manualVersion
               ).setEnvironments(
                 env.JOB_BASE_NAME,
@@ -75,7 +75,7 @@ pipeline {
                 userRemoteConfigs: scm.userRemoteConfigs,
                 extensions: [
                   [
-                    $class: 'RelativeTargetDirectory', 
+                    $class: 'RelativeTargetDirectory',
                     relativeTargetDir: facts.jenkinsScriptDirectory
                   ]
                 ],
