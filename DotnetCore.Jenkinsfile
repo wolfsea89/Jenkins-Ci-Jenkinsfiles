@@ -110,6 +110,21 @@ pipeline {
               }
               steps{
                 script{
+                  def buildSolutions = new DotnetBuildSolutions(this)
+                  buildSolutions.setSolutions(facts.applicationConfiguration.DOTNET_CORE_SOLUTIONS)
+                  buildSolutions.setParameters("--configuration Release --verbosity normal")
+                  buildSolutions.buildSolutions()
+                }
+              }
+            }
+            stage('Dotnet Core - Build Projects'){
+              when{
+                expression {
+                  facts.applicationConfiguration.DOTNET_CORE_PROJECTS ? true : false
+                }
+              }
+              steps{
+                script{
                   def buildSolutions = new DotnetBuild(this)
                   buildSolutions.setSolutions(facts.applicationConfiguration.DOTNET_CORE_SOLUTIONS)
                   buildSolutions.setParameters("--configuration Release --verbosity normal")
