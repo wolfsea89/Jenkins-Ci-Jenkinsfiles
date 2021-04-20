@@ -19,7 +19,7 @@ pipeline {
   environment {
     BINARY_DIRECTORY = 'b'
     PUBLISH_DIRECTORY = 'p'
-    DOTNET_CORE_RUNTIMES = '[ "linux-64", "win-x64" ]'
+    DOTNET_CORE_RUNTIMES = '[ "linux-x64", "win-x64" ]'
   }
   agent none
   options {
