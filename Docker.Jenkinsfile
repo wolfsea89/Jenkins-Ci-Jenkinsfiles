@@ -1,4 +1,6 @@
 @Library('Sharedlibraries') import devops.ci.*
+@Library('Sharedlibraries') import devops.ci.docker*
+
 
 import groovy.json.JsonSlurper
 import org.jenkinsci.plugins.pipeline.modeldefinition.Utils

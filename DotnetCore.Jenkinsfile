@@ -72,7 +72,6 @@ pipeline {
 
               // Read application configuration in Json
               facts.setApplicationConfiguration(readJSON(file: facts.applicationJsonFile))
-
               currentBuild.displayName = "${facts.jobBuildNumber} - ${facts.branchName} - ${facts.versionWithBuildNumber}"
             }
           }
@@ -107,7 +106,7 @@ pipeline {
               }
               steps{
                 script{
-                  def buildDocker = new DockerBuild(this)
+                  def buildDocker = new DotnetFrameworkBuild(this)
                   buildDocker.setApplications(facts.applicationConfiguration.DOTNET_CORE_PROJECTS)
                   buildDocker.setVersion(facts.versionWithBuildNumber)
                   buildDocker.buildProjects()
