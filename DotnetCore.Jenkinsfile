@@ -51,7 +51,7 @@ pipeline {
                 readJSON(text: env.PUBLISH_REPOSITORIES),
                 env.BINARY_DIRECTORY,
                 env.PUBLISH_DIRECTORY,
-                env.DOTNET_CORE_RUNTIMES
+                readJSON(text: env.DOTNET_CORE_RUNTIMES)
               ).createVersionWithBuildNumber()
 
               // Git clone repository with code to build
