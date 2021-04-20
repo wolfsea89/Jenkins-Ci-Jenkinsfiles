@@ -137,7 +137,7 @@ pipeline {
                     script{
                       def buildProjects = new DotnetBuildProjects(this)
                       buildProjects.setProjects(facts.applicationConfiguration.DOTNET_CORE_PROJECTS)
-                      buildProjects.setBinaryDirectory(facts.binaryDirectory)
+                      buildProjects.setBinaryDirectory(facts.workspace + '/' + facts.binaryDirectory)
                       buildProjects.setPublishDirectory(facts.publishDirectory)
                       buildProjects.setRuntimes(facts.dotnetCoreRuntimes)
                       buildProjects.setParameters("--configuration Release --verbosity normal")
