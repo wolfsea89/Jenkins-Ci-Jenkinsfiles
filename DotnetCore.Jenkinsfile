@@ -20,7 +20,6 @@ pipeline {
     BINARY_DIRECTORY = 'b'
     PUBLISH_DIRECTORY = 'p'
     DOTNET_CORE_RUNTIME = '[ "linux-64" ]'
-    dotnetCoreRuntime
   }
   agent none
   options {
