@@ -100,25 +100,25 @@ pipeline {
             }
           }
         }
-        // stage('Build'){
-        //   parallel {
-        //     stage('Dotnet Core'){
-        //       when{
-        //         expression {
-        //           facts.applicationConfiguration.DOTNET_CORE_PROJECTS ? true : false
-        //         }
-        //       }
-        //       steps{
-        //         script{
-        //           def buildDocker = new DotnetFrameworkBuild(this)
-        //           buildDocker.setApplications(facts.applicationConfiguration.DOTNET_CORE_PROJECTS)
-        //           buildDocker.setVersion(facts.versionWithBuildNumber)
-        //           buildDocker.buildProjects()
-        //         }
-        //       }
-        //     }
-        //   }
-        // }
+        stage('Build'){
+          parallel {
+            stage('Dotnet Core - Build Solution'){
+              when{
+                expression {
+                  facts.applicationConfiguration.DOTNET_CORE_SOLUTIONS ? true : false
+                }
+              }
+              steps{
+                script{
+                  def buildSolutions = new DotnetBuild(this)
+                  buildSolutions.setSolutions(facts.applicationConfiguration.DOTNET_CORE_SOLUTIONS)
+                  buildSolutions.setParameters("--configuration Release --verbosity normal")
+                  buildSolutions.buildSolutions()
+                }
+              }
+            }
+          }
+        }
         // stage('Publish') {
         //   parallel {
         //     stage('DockerHub - Release'){
