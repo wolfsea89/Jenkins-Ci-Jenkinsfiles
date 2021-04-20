@@ -17,6 +17,12 @@ pipeline {
     string(name: 'manualVersion', defaultValue: '', description: 'Set manual version (X.Y.Z). Worked with branch release, hotfix, master without version')
   }
   agent none
+  environment{
+    BINARY_DIRECTORY = 'b'
+    PUBLISH_DIRECTORY = 'p'
+    DOTNET_CORE_RUNTIME = '[ "linux-64" ]'
+    dotnetCoreRuntime
+  }
   options {
     skipDefaultCheckout true
   }
@@ -43,7 +49,10 @@ pipeline {
                 env.GIT_CREDS_ID,
                 env.APP_CONFIGURATION_JSON_PATH,
                 env.BASEIMAGE_SERVICES_ADMIN_CREDS_ID,
-                readJSON(text: env.PUBLISH_REPOSITORIES)
+                readJSON(text: env.PUBLISH_REPOSITORIES),
+                env.BINARY_DIRECTORY,
+                env.PUBLISH_DIRECTORY,
+                env.DOTNET_CORE_RUNTIME
               ).createVersionWithBuildNumber()
 
               // Git clone repository with code to build
@@ -125,10 +134,13 @@ pipeline {
               }
               steps{
                 script{
-                  def buildSolutions = new DotnetBuild(this)
-                  buildSolutions.setSolutions(facts.applicationConfiguration.DOTNET_CORE_SOLUTIONS)
-                  buildSolutions.setParameters("--configuration Release --verbosity normal")
-                  buildSolutions.buildSolutions()
+                  def buildProjects = new DotnetBuildProjects(this)
+                  buildProjects.setProjects(facts.applicationConfiguration.DOTNET_CORE_PROJECTS)
+                  buildProjects.setBinaryDirectory(facts.binaryDirectory)
+                  buildProjects.setPublishDirectory(facts.publishDirectory)
+                  buildProjects.setRuntime(facts.dotnetCoreRuntime)
+                  buildProjects.setParameters("--configuration Release --verbosity normal")
+                  buildProjects.buildProjects()
                 }
               }
             }
