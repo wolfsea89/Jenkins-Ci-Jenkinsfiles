@@ -110,36 +110,40 @@ pipeline {
         }
         stage('Build'){
           parallel {
-            stage('Dotnet Core - Build Solution'){
-              when{
-                expression {
-                  facts.applicationConfiguration.DOTNET_CORE_SOLUTIONS ? true : false
+            stage('Dotnet Core'){
+              stages{
+                stage('Build Solution'){
+                  when{
+                    expression {
+                      facts.applicationConfiguration.DOTNET_CORE_SOLUTIONS ? true : false
+                    }
+                  }
+                  steps{
+                    script{
+                      def buildSolutions = new DotnetBuildSolutions(this)
+                      buildSolutions.setSolutions(facts.applicationConfiguration.DOTNET_CORE_SOLUTIONS)
+                      buildSolutions.setParameters("--configuration Release --verbosity normal")
+                      buildSolutions.buildSolutions()
+                    }
+                  }
                 }
-              }
-              steps{
-                script{
-                  def buildSolutions = new DotnetBuildSolutions(this)
-                  buildSolutions.setSolutions(facts.applicationConfiguration.DOTNET_CORE_SOLUTIONS)
-                  buildSolutions.setParameters("--configuration Release --verbosity normal")
-                  buildSolutions.buildSolutions()
-                }
-              }
-            }
-            stage('Dotnet Core - Build Projects'){
-              when{
-                expression {
-                  facts.applicationConfiguration.DOTNET_CORE_PROJECTS ? true : false
-                }
-              }
-              steps{
-                script{
-                  def buildProjects = new DotnetBuildProjects(this)
-                  buildProjects.setProjects(facts.applicationConfiguration.DOTNET_CORE_PROJECTS)
-                  buildProjects.setBinaryDirectory(facts.binaryDirectory)
-                  buildProjects.setPublishDirectory(facts.publishDirectory)
-                  buildProjects.setRuntime(facts.dotnetCoreRuntime)
-                  buildProjects.setParameters("--configuration Release --verbosity normal")
-                  buildProjects.buildProjects()
+                stage('Dotnet Core - Build Projects'){
+                  when{
+                    expression {
+                      facts.applicationConfiguration.DOTNET_CORE_PROJECTS ? true : false
+                    }
+                  }
+                  steps{
+                    script{
+                      def buildProjects = new DotnetBuildProjects(this)
+                      buildProjects.setProjects(facts.applicationConfiguration.DOTNET_CORE_PROJECTS)
+                      buildProjects.setBinaryDirectory(facts.binaryDirectory)
+                      buildProjects.setPublishDirectory(facts.publishDirectory)
+                      buildProjects.setRuntime(facts.dotnetCoreRuntime)
+                      buildProjects.setParameters("--configuration Release --verbosity normal")
+                      buildProjects.buildProjects()
+                    }
+                  }
                 }
               }
             }

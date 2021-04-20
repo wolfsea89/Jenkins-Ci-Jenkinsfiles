@@ -33,7 +33,7 @@ pipeline {
   stages{
     stage('Continuous Integration') {
       agent {
-        label 'slave_ci_build'
+        label 'slave_ci_build_docker'
       }
       stages {
         stage('Preparing to work') {
@@ -161,7 +161,6 @@ pipeline {
               }
               steps{
                 script{
-                  println("WSK")
                   def repository = facts.publishRepositories.DockerHubSnapshot
                   def publishDocker = new DockerPublish(this)
                   publishDocker.setApplications(facts.applicationConfiguration.DOCKER_PROJECTS)
