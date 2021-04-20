@@ -178,20 +178,20 @@ pipeline {
         //   }
         // }
       }
-      post{
-        always{
-          script{
-            def repository = facts.publishRepositories
-            def publishDocker = new DockerPublish(this)
-            publishDocker.setApplications(facts.applicationConfiguration.DOTNET_CORE_PROJECTS)
-            publishDocker.setVersion(facts.versionWithBuildNumber)
-            publishDocker.clean()
-            publishDocker.clean(repository.DockerHubRelease.repositoryName)
-            publishDocker.clean(repository.DockerHubSnapshot.repositoryName)
-            publishDocker.clean(repository.GitHubRelease.repositoryName)
-          }
-        }
-      }
+      // post{
+      //   always{
+      //     script{
+      //       def repository = facts.publishRepositories
+      //       def publishDocker = new DockerPublish(this)
+      //       publishDocker.setApplications(facts.applicationConfiguration.DOTNET_CORE_PROJECTS)
+      //       publishDocker.setVersion(facts.versionWithBuildNumber)
+      //       publishDocker.clean()
+      //       publishDocker.clean(repository.DockerHubRelease.repositoryName)
+      //       publishDocker.clean(repository.DockerHubSnapshot.repositoryName)
+      //       publishDocker.clean(repository.GitHubRelease.repositoryName)
+      //     }
+      //   }
+      // }
     }
   }
 }
