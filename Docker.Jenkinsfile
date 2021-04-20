@@ -1,5 +1,5 @@
 @Library('Sharedlibraries') import devops.ci.*
-@Library('Sharedlibraries') import devops.ci.docker*
+@Library('Sharedlibraries') import devops.ci.docker.*
 
 
 import groovy.json.JsonSlurper
