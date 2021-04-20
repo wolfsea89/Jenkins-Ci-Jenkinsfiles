@@ -1,4 +1,7 @@
-@Library('Sharedlibraries') import devops.ci.*
+@Library('Sharedlibraries')
+import devops.ci.*
+import devops.ci.docker.*
+
 
 import groovy.json.JsonSlurper
 import org.jenkinsci.plugins.pipeline.modeldefinition.Utils
@@ -30,7 +33,7 @@ pipeline {
   stages{
     stage('Continuous Integration') {
       agent {
-        label 'slave_ci_build'
+        label 'slave_ci_build_docker'
       }
       stages {
         stage('Preparing to work') {
@@ -67,7 +70,7 @@ pipeline {
                 ]
               ])
 
-              // Git clone repository with code to build
+              // Git clone repository with scripts to jenkinsfile
               checkout([
                 $class: 'GitSCM',
                 branches: scm.branches,
@@ -83,7 +86,6 @@ pipeline {
 
               // Read application configuration in Json
               facts.setApplicationConfiguration(readJSON(file: facts.applicationJsonFile))
-
 
               currentBuild.displayName = "${facts.jobBuildNumber} - ${facts.branchName} - ${facts.versionWithBuildNumber}"
             }
