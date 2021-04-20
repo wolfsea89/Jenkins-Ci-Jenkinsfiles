@@ -87,7 +87,7 @@ pipeline {
               }
               steps{
                 script{
-                  def prebuild = new PrebuildScriptsDotnetCore(this)
+                  def prebuild = new DotnetAssemblyVersion(this)
                   prebuild.setApplications(facts.applicationConfiguration.DOTNET_CORE_PROJECTS)
                   prebuild.setVersion(facts.versionWithBuildNumber)
                   prebuild.setJenkinsJobInfo(facts.jobName, facts.jobBuildNumber)
@@ -99,7 +99,7 @@ pipeline {
         }
         stage('Build'){
           parallel {
-            stage('Docker'){
+            stage('Dotnet Core'){
               when{
                 expression {
                   facts.applicationConfiguration.DOTNET_CORE_PROJECTS ? true : false
