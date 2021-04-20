@@ -100,83 +100,83 @@ pipeline {
             }
           }
         }
-        stage('Build'){
-          parallel {
-            stage('Dotnet Core'){
-              when{
-                expression {
-                  facts.applicationConfiguration.DOTNET_CORE_PROJECTS ? true : false
-                }
-              }
-              steps{
-                script{
-                  def buildDocker = new DotnetFrameworkBuild(this)
-                  buildDocker.setApplications(facts.applicationConfiguration.DOTNET_CORE_PROJECTS)
-                  buildDocker.setVersion(facts.versionWithBuildNumber)
-                  buildDocker.buildProjects()
-                }
-              }
-            }
-          }
-        }
-        stage('Publish') {
-          parallel {
-            stage('DockerHub - Release'){
-              when{
-                expression {
-                  Boolean isDockerProject = (facts.applicationConfiguration.DOTNET_CORE_PROJECTS) ? true : false
-                  Boolean isReleaseArtefact = (facts.artifactType == "release") ? true : false
-                  (isDockerProject && isReleaseArtefact) ? true : false
-                }
-              }
-              steps{
-                script{
-                  def repository = facts.publishRepositories.DockerHubRelease
-                  def publishDocker = new DockerPublish(this)
-                  publishDocker.setApplications(facts.applicationConfiguration.DOTNET_CORE_PROJECTS)
-                  publishDocker.setVersion(facts.versionWithBuildNumber)
-                  publishDocker.publish(repository.repositoryUrl, repository.repositoryName, repository.repositoryCredentialID)
-                }
-              }
-            }
-            stage('DockerHub - Snapshot'){
-              when{
-                expression {
-                  Boolean isDockerProject = (facts.applicationConfiguration.DOTNET_CORE_PROJECTS) ? true : false
-                  Boolean isReleaseArtefact = (facts.artifactType == "snapshot") ? true : false
-                  (isDockerProject && isReleaseArtefact) ? true : false
-                }
-              }
-              steps{
-                script{
-                  def repository = facts.publishRepositories.DockerHubSnapshot
-                  def publishDocker = new DockerPublish(this)
-                  publishDocker.setApplications(facts.applicationConfiguration.DOTNET_CORE_PROJECTS)
-                  publishDocker.setVersion(facts.versionWithBuildNumber)
-                  publishDocker.publish(repository.repositoryUrl, repository.repositoryName, repository.repositoryCredentialID)
-                }
-              }
-            }
-            stage('GitHubRelease'){
-              when{
-                expression {
-                  Boolean isDockerProject = (facts.applicationConfiguration.DOTNET_CORE_PROJECTS) ? true : false
-                  Boolean isReleaseArtefact = (facts.artifactType == "release") ? true : false
-                  (isDockerProject && isReleaseArtefact) ? true : false
-                }
-              }
-              steps{
-                script{
-                  def repository = facts.publishRepositories.GitHubRelease
-                  def publishDocker = new DockerPublish(this)
-                  publishDocker.setApplications(facts.applicationConfiguration.DOTNET_CORE_PROJECTS)
-                  publishDocker.setVersion(facts.versionWithBuildNumber)
-                  publishDocker.publish(repository.repositoryUrl, repository.repositoryName, repository.repositoryCredentialID)
-                }
-              }
-            }
-          }
-        }
+        // stage('Build'){
+        //   parallel {
+        //     stage('Dotnet Core'){
+        //       when{
+        //         expression {
+        //           facts.applicationConfiguration.DOTNET_CORE_PROJECTS ? true : false
+        //         }
+        //       }
+        //       steps{
+        //         script{
+        //           def buildDocker = new DotnetFrameworkBuild(this)
+        //           buildDocker.setApplications(facts.applicationConfiguration.DOTNET_CORE_PROJECTS)
+        //           buildDocker.setVersion(facts.versionWithBuildNumber)
+        //           buildDocker.buildProjects()
+        //         }
+        //       }
+        //     }
+        //   }
+        // }
+        // stage('Publish') {
+        //   parallel {
+        //     stage('DockerHub - Release'){
+        //       when{
+        //         expression {
+        //           Boolean isDockerProject = (facts.applicationConfiguration.DOTNET_CORE_PROJECTS) ? true : false
+        //           Boolean isReleaseArtefact = (facts.artifactType == "release") ? true : false
+        //           (isDockerProject && isReleaseArtefact) ? true : false
+        //         }
+        //       }
+        //       steps{
+        //         script{
+        //           def repository = facts.publishRepositories.DockerHubRelease
+        //           def publishDocker = new DockerPublish(this)
+        //           publishDocker.setApplications(facts.applicationConfiguration.DOTNET_CORE_PROJECTS)
+        //           publishDocker.setVersion(facts.versionWithBuildNumber)
+        //           publishDocker.publish(repository.repositoryUrl, repository.repositoryName, repository.repositoryCredentialID)
+        //         }
+        //       }
+        //     }
+        //     stage('DockerHub - Snapshot'){
+        //       when{
+        //         expression {
+        //           Boolean isDockerProject = (facts.applicationConfiguration.DOTNET_CORE_PROJECTS) ? true : false
+        //           Boolean isReleaseArtefact = (facts.artifactType == "snapshot") ? true : false
+        //           (isDockerProject && isReleaseArtefact) ? true : false
+        //         }
+        //       }
+        //       steps{
+        //         script{
+        //           def repository = facts.publishRepositories.DockerHubSnapshot
+        //           def publishDocker = new DockerPublish(this)
+        //           publishDocker.setApplications(facts.applicationConfiguration.DOTNET_CORE_PROJECTS)
+        //           publishDocker.setVersion(facts.versionWithBuildNumber)
+        //           publishDocker.publish(repository.repositoryUrl, repository.repositoryName, repository.repositoryCredentialID)
+        //         }
+        //       }
+        //     }
+        //     stage('GitHubRelease'){
+        //       when{
+        //         expression {
+        //           Boolean isDockerProject = (facts.applicationConfiguration.DOTNET_CORE_PROJECTS) ? true : false
+        //           Boolean isReleaseArtefact = (facts.artifactType == "release") ? true : false
+        //           (isDockerProject && isReleaseArtefact) ? true : false
+        //         }
+        //       }
+        //       steps{
+        //         script{
+        //           def repository = facts.publishRepositories.GitHubRelease
+        //           def publishDocker = new DockerPublish(this)
+        //           publishDocker.setApplications(facts.applicationConfiguration.DOTNET_CORE_PROJECTS)
+        //           publishDocker.setVersion(facts.versionWithBuildNumber)
+        //           publishDocker.publish(repository.repositoryUrl, repository.repositoryName, repository.repositoryCredentialID)
+        //         }
+        //       }
+        //     }
+        //   }
+        // }
       }
       post{
         always{
