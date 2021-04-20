@@ -19,7 +19,7 @@ pipeline {
   environment {
     BINARY_DIRECTORY = 'b'
     PUBLISH_DIRECTORY = 'p'
-    DOTNET_CORE_RUNTIME = '[ "linux-64" ]'
+    DOTNET_CORE_RUNTIMES = '[ "linux-64" ]'
   }
   agent none
   options {
@@ -51,7 +51,7 @@ pipeline {
                 readJSON(text: env.PUBLISH_REPOSITORIES),
                 env.BINARY_DIRECTORY,
                 env.PUBLISH_DIRECTORY,
-                env.DOTNET_CORE_RUNTIME
+                env.DOTNET_CORE_RUNTIMES
               ).createVersionWithBuildNumber()
 
               // Git clone repository with code to build
@@ -127,7 +127,7 @@ pipeline {
                     }
                   }
                 }
-                stage('Dotnet Core - Build Projects'){
+                stage('Build Projects'){
                   when{
                     expression {
                       facts.applicationConfiguration.DOTNET_CORE_PROJECTS ? true : false
@@ -139,7 +139,7 @@ pipeline {
                       buildProjects.setProjects(facts.applicationConfiguration.DOTNET_CORE_PROJECTS)
                       buildProjects.setBinaryDirectory(facts.binaryDirectory)
                       buildProjects.setPublishDirectory(facts.publishDirectory)
-                      buildProjects.setRuntime(facts.dotnetCoreRuntime)
+                      buildProjects.setRuntimes(facts.dotnetCoreRuntimes)
                       buildProjects.setParameters("--configuration Release --verbosity normal")
                       buildProjects.buildProjects()
                     }
