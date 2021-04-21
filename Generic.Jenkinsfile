@@ -16,6 +16,12 @@ pipeline {
   //   string(name: 'repositoryUrl', defaultValue: 'git@github.com:wolfsea89/Jenkins-BaseImage.git', description: 'Repository URL (git/https)')
     string(name: 'manualVersion', defaultValue: '', description: 'Set manual version (X.Y.Z). Worked with branch release, hotfix, master without version')
   }
+  environment {
+    BINARY_DIRECTORY = 'b'
+    PUBLISH_DIRECTORY = 'p'
+    DOTNET_CORE_RUNTIMES = '[ "linux-x64", "win-x64" ]'
+    DOTNET_CORE_TEST_RESULTS_DIRECTORY = "TestResults"
+  }
   agent none
   options {
     skipDefaultCheckout true
