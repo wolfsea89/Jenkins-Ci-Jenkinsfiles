@@ -52,6 +52,7 @@ pipeline {
                 env.JENKINSFILE_SCRIPTS_DIR,
                 env.GIT_CREDS_ID,
                 env.APP_CONFIGURATION_JSON_PATH,
+              ).setDockerEnvironments(
                 env.BASEIMAGE_SERVICES_ADMIN_CREDS_ID,
                 readJSON(text: env.PUBLISH_REPOSITORIES)
               ).createVersionWithBuildNumber()

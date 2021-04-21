@@ -20,6 +20,7 @@ pipeline {
     BINARY_DIRECTORY = 'b'
     PUBLISH_DIRECTORY = 'p'
     DOTNET_CORE_RUNTIMES = '[ "linux-x64", "win-x64" ]'
+    DOTNET_CORE_TEST_RESULTS_DIRECTORY = "TestResults"
   }
   agent none
   options {
@@ -47,11 +48,11 @@ pipeline {
                 env.JENKINSFILE_SCRIPTS_DIR,
                 env.GIT_CREDS_ID,
                 env.APP_CONFIGURATION_JSON_PATH,
-                env.BASEIMAGE_SERVICES_ADMIN_CREDS_ID,
-                readJSON(text: env.PUBLISH_REPOSITORIES),
+              ).setDotnetEnvironments(
                 env.BINARY_DIRECTORY,
                 env.PUBLISH_DIRECTORY,
-                readJSON(text: env.DOTNET_CORE_RUNTIMES)
+                readJSON(text: env.DOTNET_CORE_RUNTIMES),
+                env.DOTNET_CORE_TEST_RESULTS_DIRECTORY
               ).createVersionWithBuildNumber()
 
               // Git clone repository with code to build
@@ -190,36 +191,22 @@ pipeline {
             }
             stage('Unit Test'){
               stages{
-                stage('Build Solution'){
+                stage('Unit Test'){
                   when{
                     expression {
-                      facts.applicationConfiguration.DOTNET_CORE_SOLUTIONS ? true : false
+                      def solutionsExist = facts.applicationConfiguration.DOTNET_CORE_SOLUTIONS ? true : false
+                      def dotnetCoreProjectsExist = facts.applicationConfiguration.DOTNET_CORE_PROJECTS ? true : false
+                      return solutionsExist || dotnetCoreProjectsExist
                     }
                   }
                   steps{
                     script{
-                      def buildSolutions = new DotnetBuildSolutions(this)
-                      buildSolutions.setSolutions(facts.applicationConfiguration.DOTNET_CORE_SOLUTIONS)
-                      buildSolutions.setParameters("--configuration Release --verbosity normal")
-                      buildSolutions.buildSolutions()
-                    }
-                  }
-                }
-                stage('Build Projects'){
-                  when{
-                    expression {
-                      facts.applicationConfiguration.DOTNET_CORE_PROJECTS ? true : false
-                    }
-                  }
-                  steps{
-                    script{
-                      def buildProjects = new DotnetBuildProjects(this)
-                      buildProjects.setProjects(facts.applicationConfiguration.DOTNET_CORE_PROJECTS)
-                      buildProjects.setBinaryDirectory(facts.workspace + '/' + facts.binaryDirectory)
-                      buildProjects.setPublishDirectory(facts.publishDirectory)
-                      buildProjects.setRuntimes(facts.dotnetCoreRuntimes)
-                      buildProjects.setParameters("--configuration Release --verbosity normal")
-                      buildProjects.buildProjects()
+                      def unitTests = new DotnetUnitTests(this)
+                      unitTests.setSolutions(facts.applicationConfiguration.DOTNET_CORE_SOLUTIONS)
+                      unitTests.setProjects(facts.applicationConfiguration.DOTNET_CORE_PROJECTS)
+                      unitTests.setResultsDirectory(facts.dotnetCoreTestResultsDirectory)
+                      unitTests.setParameters("--verbosity normal --logger \"trx\" --collect:\"Code Coverage\"")
+                      unitTests.runUnitTest()
                     }
                   }
                 }
