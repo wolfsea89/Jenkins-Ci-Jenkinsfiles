@@ -195,7 +195,7 @@ pipeline {
                     expression {
                       def solutionsExist = facts.applicationConfiguration.DOTNET_CORE_SOLUTIONS ? true : false
                       def dotnetCoreProjectsExist = facts.applicationConfiguration.DOTNET_CORE_PROJECTS ? true : false
-                      return solutionsExist || dotnetCoreProjectsExist
+                      (solutionsExist || dotnetCoreProjectsExist) ? true : false
                     }
                   }
                   steps{
