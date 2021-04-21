@@ -47,7 +47,7 @@ pipeline {
                 env.WORKSPACE,
                 env.JENKINSFILE_SCRIPTS_DIR,
                 env.GIT_CREDS_ID,
-                env.APP_CONFIGURATION_JSON_PATH,
+                env.APP_CONFIGURATION_JSON_PATH
               ).setDotnetEnvironments(
                 env.BINARY_DIRECTORY,
                 env.PUBLISH_DIRECTORY,
