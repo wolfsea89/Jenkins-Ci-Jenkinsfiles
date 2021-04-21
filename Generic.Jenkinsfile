@@ -94,7 +94,7 @@ pipeline {
               }
               when{
                 expression {
-                  return facts.applicationConfiguration.DOCKER_PROJECTS ? true : false
+                  facts.applicationConfiguration.DOCKER_PROJECTS ? true : false
                 }
               }
               steps{
