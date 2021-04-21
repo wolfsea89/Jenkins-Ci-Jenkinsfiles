@@ -149,6 +149,84 @@ pipeline {
             }
           }
         }
+        stage('Publish and Tests'){
+          parallel {
+            stage('Artefact'){
+              stages{
+                stage('Build Solution'){
+                  when{
+                    expression {
+                      facts.applicationConfiguration.DOTNET_CORE_SOLUTIONS ? true : false
+                    }
+                  }
+                  steps{
+                    script{
+                      def buildSolutions = new DotnetBuildSolutions(this)
+                      buildSolutions.setSolutions(facts.applicationConfiguration.DOTNET_CORE_SOLUTIONS)
+                      buildSolutions.setParameters("--configuration Release --verbosity normal")
+                      buildSolutions.buildSolutions()
+                    }
+                  }
+                }
+                stage('Build Projects'){
+                  when{
+                    expression {
+                      facts.applicationConfiguration.DOTNET_CORE_PROJECTS ? true : false
+                    }
+                  }
+                  steps{
+                    script{
+                      def buildProjects = new DotnetBuildProjects(this)
+                      buildProjects.setProjects(facts.applicationConfiguration.DOTNET_CORE_PROJECTS)
+                      buildProjects.setBinaryDirectory(facts.workspace + '/' + facts.binaryDirectory)
+                      buildProjects.setPublishDirectory(facts.publishDirectory)
+                      buildProjects.setRuntimes(facts.dotnetCoreRuntimes)
+                      buildProjects.setParameters("--configuration Release --verbosity normal")
+                      buildProjects.buildProjects()
+                    }
+                  }
+                }
+              }
+            }
+            stage('Unit Test'){
+              stages{
+                stage('Build Solution'){
+                  when{
+                    expression {
+                      facts.applicationConfiguration.DOTNET_CORE_SOLUTIONS ? true : false
+                    }
+                  }
+                  steps{
+                    script{
+                      def buildSolutions = new DotnetBuildSolutions(this)
+                      buildSolutions.setSolutions(facts.applicationConfiguration.DOTNET_CORE_SOLUTIONS)
+                      buildSolutions.setParameters("--configuration Release --verbosity normal")
+                      buildSolutions.buildSolutions()
+                    }
+                  }
+                }
+                stage('Build Projects'){
+                  when{
+                    expression {
+                      facts.applicationConfiguration.DOTNET_CORE_PROJECTS ? true : false
+                    }
+                  }
+                  steps{
+                    script{
+                      def buildProjects = new DotnetBuildProjects(this)
+                      buildProjects.setProjects(facts.applicationConfiguration.DOTNET_CORE_PROJECTS)
+                      buildProjects.setBinaryDirectory(facts.workspace + '/' + facts.binaryDirectory)
+                      buildProjects.setPublishDirectory(facts.publishDirectory)
+                      buildProjects.setRuntimes(facts.dotnetCoreRuntimes)
+                      buildProjects.setParameters("--configuration Release --verbosity normal")
+                      buildProjects.buildProjects()
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
         // stage('Publish') {
         //   parallel {
         //     stage('DockerHub - Release'){
