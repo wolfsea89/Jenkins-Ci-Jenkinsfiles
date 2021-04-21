@@ -2,7 +2,6 @@
 import devops.ci.*
 import devops.ci.docker.*
 
-
 import groovy.json.JsonSlurper
 import org.jenkinsci.plugins.pipeline.modeldefinition.Utils
 
@@ -51,7 +50,7 @@ pipeline {
                 env.WORKSPACE,
                 env.JENKINSFILE_SCRIPTS_DIR,
                 env.GIT_CREDS_ID,
-                env.APP_CONFIGURATION_JSON_PATH,
+                env.APP_CONFIGURATION_JSON_PATH
               ).setDockerEnvironments(
                 env.BASEIMAGE_SERVICES_ADMIN_CREDS_ID,
                 readJSON(text: env.PUBLISH_REPOSITORIES)
@@ -87,7 +86,6 @@ pipeline {
 
               // Read application configuration in Json
               facts.setApplicationConfiguration(readJSON(file: facts.applicationJsonFile))
-
               currentBuild.displayName = "${facts.jobBuildNumber} - ${facts.branchName} - ${facts.versionWithBuildNumber}"
             }
           }

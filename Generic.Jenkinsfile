@@ -1,5 +1,6 @@
 @Library('Sharedlibraries')
 import devops.ci.*
+import devops.ci.docker.*
 import devops.ci.dotnet.*
 import devops.ci.dotnet.core.*
 
@@ -15,21 +16,13 @@ pipeline {
   //   string(name: 'repositoryUrl', defaultValue: 'git@github.com:wolfsea89/Jenkins-BaseImage.git', description: 'Repository URL (git/https)')
     string(name: 'manualVersion', defaultValue: '', description: 'Set manual version (X.Y.Z). Worked with branch release, hotfix, master without version')
   }
-  environment {
-    BINARY_DIRECTORY = 'b'
-    PUBLISH_DIRECTORY = 'p'
-    DOTNET_CORE_RUNTIMES = '[ "linux-x64", "win-x64" ]'
-    DOTNET_CORE_TEST_RESULTS_DIRECTORY = "TestResults"
-  }
   agent none
   options {
     skipDefaultCheckout true
   }
   stages{
     stage('Continuous Integration') {
-      agent {
-        label 'slave_ci_build_dotnet_core'
-      }
+      agent none
       stages {
         stage('Preparing to work') {
           steps {
@@ -47,6 +40,9 @@ pipeline {
                 env.JENKINSFILE_SCRIPTS_DIR,
                 env.GIT_CREDS_ID,
                 env.APP_CONFIGURATION_JSON_PATH
+              ).setDockerEnvironments(
+                env.BASEIMAGE_SERVICES_ADMIN_CREDS_ID,
+                readJSON(text: env.PUBLISH_REPOSITORIES)
               ).setDotnetEnvironments(
                 env.BINARY_DIRECTORY,
                 env.PUBLISH_DIRECTORY,
@@ -90,7 +86,30 @@ pipeline {
         }
         stage('Prebuild Scripts') {
           parallel {
+            stage('Docker'){
+              agent {
+                label 'slave_ci_build_docker'
+              }
+              when{
+                expression {
+                  facts.applicationConfiguration.DOCKER_PROJECTS ? true : false
+                }
+              }
+              steps{
+                script{
+                  def prebuild = new PrebuildScriptsDocker(this)
+                  prebuild.setApplications(facts.applicationConfiguration.DOCKER_PROJECTS)
+                  prebuild.setVersion(facts.versionWithBuildNumber)
+                  prebuild.setAdminsCredentials(facts.baseImagesAdminCredentialsInService)
+                  prebuild.setJenkinsJobInfo(facts.jobName, facts.jobBuildNumber)
+                  prebuild.execute()
+                }
+              }
+            }
             stage('Dotnet Core'){
+              agent {
+                label 'slave_ci_build_dotnet_core'
+              }
               when{
                 expression {
                   facts.applicationConfiguration.DOTNET_CORE_PROJECTS ? true : false
@@ -110,6 +129,21 @@ pipeline {
         }
         stage('Build'){
           parallel {
+            stage('Docker'){
+              when{
+                expression {
+                  facts.applicationConfiguration.DOCKER_PROJECTS ? true : false
+                }
+              }
+              steps{
+                script{
+                  def buildDocker = new DockerBuild(this)
+                  buildDocker.setApplications(facts.applicationConfiguration.DOCKER_PROJECTS)
+                  buildDocker.setVersion(facts.versionWithBuildNumber)
+                  buildDocker.buildProjects()
+                }
+              }
+            }
             stage('Dotnet Core'){
               stages{
                 stage('Build Solution'){
@@ -213,79 +247,79 @@ pipeline {
             }
           }
         }
-        // stage('Publish') {
-        //   parallel {
-        //     stage('DockerHub - Release'){
-        //       when{
-        //         expression {
-        //           Boolean isDockerProject = (facts.applicationConfiguration.DOTNET_CORE_PROJECTS) ? true : false
-        //           Boolean isReleaseArtefact = (facts.artifactType == "release") ? true : false
-        //           (isDockerProject && isReleaseArtefact) ? true : false
-        //         }
-        //       }
-        //       steps{
-        //         script{
-        //           def repository = facts.publishRepositories.DockerHubRelease
-        //           def publishDocker = new DockerPublish(this)
-        //           publishDocker.setApplications(facts.applicationConfiguration.DOTNET_CORE_PROJECTS)
-        //           publishDocker.setVersion(facts.versionWithBuildNumber)
-        //           publishDocker.publish(repository.repositoryUrl, repository.repositoryName, repository.repositoryCredentialID)
-        //         }
-        //       }
-        //     }
-        //     stage('DockerHub - Snapshot'){
-        //       when{
-        //         expression {
-        //           Boolean isDockerProject = (facts.applicationConfiguration.DOTNET_CORE_PROJECTS) ? true : false
-        //           Boolean isReleaseArtefact = (facts.artifactType == "snapshot") ? true : false
-        //           (isDockerProject && isReleaseArtefact) ? true : false
-        //         }
-        //       }
-        //       steps{
-        //         script{
-        //           def repository = facts.publishRepositories.DockerHubSnapshot
-        //           def publishDocker = new DockerPublish(this)
-        //           publishDocker.setApplications(facts.applicationConfiguration.DOTNET_CORE_PROJECTS)
-        //           publishDocker.setVersion(facts.versionWithBuildNumber)
-        //           publishDocker.publish(repository.repositoryUrl, repository.repositoryName, repository.repositoryCredentialID)
-        //         }
-        //       }
-        //     }
-        //     stage('GitHubRelease'){
-        //       when{
-        //         expression {
-        //           Boolean isDockerProject = (facts.applicationConfiguration.DOTNET_CORE_PROJECTS) ? true : false
-        //           Boolean isReleaseArtefact = (facts.artifactType == "release") ? true : false
-        //           (isDockerProject && isReleaseArtefact) ? true : false
-        //         }
-        //       }
-        //       steps{
-        //         script{
-        //           def repository = facts.publishRepositories.GitHubRelease
-        //           def publishDocker = new DockerPublish(this)
-        //           publishDocker.setApplications(facts.applicationConfiguration.DOTNET_CORE_PROJECTS)
-        //           publishDocker.setVersion(facts.versionWithBuildNumber)
-        //           publishDocker.publish(repository.repositoryUrl, repository.repositoryName, repository.repositoryCredentialID)
-        //         }
-        //       }
-        //     }
-        //   }
-        // }
+        stage('Publish') {
+          parallel {
+            stage('DockerHub - Release'){
+              when{
+                expression {
+                  Boolean isDockerProject = (facts.applicationConfiguration.DOCKER_PROJECTS) ? true : false
+                  Boolean isReleaseArtefact = (facts.artifactType == "release") ? true : false
+                  (isDockerProject && isReleaseArtefact) ? true : false
+                }
+              }
+              steps{
+                script{
+                  def repository = facts.publishRepositories.DockerHubRelease
+                  def publishDocker = new DockerPublish(this)
+                  publishDocker.setApplications(facts.applicationConfiguration.DOCKER_PROJECTS)
+                  publishDocker.setVersion(facts.versionWithBuildNumber)
+                  publishDocker.publish(repository.repositoryUrl, repository.repositoryName, repository.repositoryCredentialID)
+                }
+              }
+            }
+            stage('DockerHub - Snapshot'){
+              when{
+                expression {
+                  Boolean isDockerProject = (facts.applicationConfiguration.DOCKER_PROJECTS) ? true : false
+                  Boolean isReleaseArtefact = (facts.artifactType == "snapshot") ? true : false
+                  (isDockerProject && isReleaseArtefact) ? true : false
+                }
+              }
+              steps{
+                script{
+                  def repository = facts.publishRepositories.DockerHubSnapshot
+                  def publishDocker = new DockerPublish(this)
+                  publishDocker.setApplications(facts.applicationConfiguration.DOCKER_PROJECTS)
+                  publishDocker.setVersion(facts.versionWithBuildNumber)
+                  publishDocker.publish(repository.repositoryUrl, repository.repositoryName, repository.repositoryCredentialID)
+                }
+              }
+            }
+            stage('GitHubRelease'){
+              when{
+                expression {
+                  Boolean isDockerProject = (facts.applicationConfiguration.DOCKER_PROJECTS) ? true : false
+                  Boolean isReleaseArtefact = (facts.artifactType == "release") ? true : false
+                  (isDockerProject && isReleaseArtefact) ? true : false
+                }
+              }
+              steps{
+                script{
+                  def repository = facts.publishRepositories.GitHubRelease
+                  def publishDocker = new DockerPublish(this)
+                  publishDocker.setApplications(facts.applicationConfiguration.DOCKER_PROJECTS)
+                  publishDocker.setVersion(facts.versionWithBuildNumber)
+                  publishDocker.publish(repository.repositoryUrl, repository.repositoryName, repository.repositoryCredentialID)
+                }
+              }
+            }
+          }
+        }
       }
-      // post{
-      //   always{
-      //     script{
-      //       def repository = facts.publishRepositories
-      //       def publishDocker = new DockerPublish(this)
-      //       publishDocker.setApplications(facts.applicationConfiguration.DOTNET_CORE_PROJECTS)
-      //       publishDocker.setVersion(facts.versionWithBuildNumber)
-      //       publishDocker.clean()
-      //       publishDocker.clean(repository.DockerHubRelease.repositoryName)
-      //       publishDocker.clean(repository.DockerHubSnapshot.repositoryName)
-      //       publishDocker.clean(repository.GitHubRelease.repositoryName)
-      //     }
-      //   }
-      // }
+      post{
+        always{
+          script{
+            def repository = facts.publishRepositories
+            def publishDocker = new DockerPublish(this)
+            publishDocker.setApplications(facts.applicationConfiguration.DOCKER_PROJECTS)
+            publishDocker.setVersion(facts.versionWithBuildNumber)
+            publishDocker.clean()
+            publishDocker.clean(repository.DockerHubRelease.repositoryName)
+            publishDocker.clean(repository.DockerHubSnapshot.repositoryName)
+            publishDocker.clean(repository.GitHubRelease.repositoryName)
+          }
+        }
+      }
     }
   }
 }
