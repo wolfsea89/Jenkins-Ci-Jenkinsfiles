@@ -22,7 +22,9 @@ pipeline {
   }
   stages{
     stage('Continuous Integration') {
-      agent none
+      agent {
+        label 'slave_ci_build_dotnet_core'
+      }
       stages {
         stage('Preparing to work') {
           steps {
