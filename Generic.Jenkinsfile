@@ -22,15 +22,14 @@ pipeline {
     DOTNET_CORE_RUNTIMES = '[ "linux-x64", "win-x64" ]'
     DOTNET_CORE_TEST_RESULTS_DIRECTORY = "TestResults"
   }
-  agent none
+  agent {
+    label 'slave_ci_build_dotnet_core'
+  }
   options {
     skipDefaultCheckout true
   }
   stages{
     stage('Continuous Integration') {
-      agent {
-        label 'slave_ci_build_dotnet_core'
-      }
       stages {
         stage('Preparing to work') {
           steps {
