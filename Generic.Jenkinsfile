@@ -92,11 +92,9 @@ pipeline {
           }
         }
         stage('Prebuild Scripts') {
+          options { skipDefaultCheckout() }
           parallel {
             stage('Docker'){
-              agent {
-                label 'slave_ci_build_docker'
-              }
               when{
                 expression {
                   facts.applicationConfiguration.DOCKER_PROJECTS ? true : false
@@ -114,9 +112,6 @@ pipeline {
               }
             }
             stage('Dotnet Core'){
-              agent {
-                label 'slave_ci_build_dotnet_core'
-              }
               when{
                 expression {
                   facts.applicationConfiguration.DOTNET_CORE_PROJECTS ? true : false
@@ -135,6 +130,7 @@ pipeline {
           }
         }
         stage('Build'){
+          options { skipDefaultCheckout() }
           parallel {
             stage('Docker'){
               when{
@@ -191,6 +187,7 @@ pipeline {
           }
         }
         stage('Create Artefact and Tests'){
+          options { skipDefaultCheckout() }
           parallel {
             stage('Artefact'){
               stages{
@@ -255,6 +252,7 @@ pipeline {
           }
         }
         stage('Publish') {
+          options { skipDefaultCheckout() }
           parallel {
             stage('Release Artefact'){
               when{
