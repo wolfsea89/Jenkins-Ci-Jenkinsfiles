@@ -53,7 +53,7 @@ pipeline {
                 env.PUBLISH_DIRECTORY,
                 readJSON(text: env.DOTNET_CORE_RUNTIMES),
                 env.DOTNET_CORE_TEST_RESULTS_DIRECTORY,
-                env.DOTNET_CORE_DISABLE_UNIT_TEST
+                "${env.DOTNET_CORE_DISABLE_UNIT_TEST}"
               ).createVersionWithBuildNumber()
 
               // Git clone repository with code to build
