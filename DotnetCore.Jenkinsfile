@@ -268,11 +268,6 @@ pipeline {
                 }
               }
             }
-            stage('Unit Test'){
-              stages{
-
-              }
-            }
           }
         }
         // stage('Publish') {
