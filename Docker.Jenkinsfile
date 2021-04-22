@@ -31,65 +31,71 @@ pipeline {
   }
   stages{
     stage('Continuous Integration') {
-      agent {
-        label 'slave_ci_build_docker'
-      }
       stages {
         stage('Preparing to work') {
-          steps {
-            script {
-              deleteDir()
+          parallel {
+            stage('Docker'){
+              agent {
+                label 'slave_ci_build_docker'
+              }
+              steps{
+                script {
+                  deleteDir()
 
-              facts.setParametersFromForm(
-                params.branchName,
-                params.repositoryUrl,
-                params.manualVersion
-              ).setEnvironments(
-                env.JOB_BASE_NAME,
-                env.BUILD_NUMBER,
-                env.WORKSPACE,
-                env.JENKINSFILE_SCRIPTS_DIR,
-                env.GIT_CREDS_ID,
-                env.APP_CONFIGURATION_JSON_PATH
-              ).setDockerEnvironments(
-                env.BASEIMAGE_SERVICES_ADMIN_CREDS_ID,
-                readJSON(text: env.PUBLISH_REPOSITORIES)
-              ).createVersionWithBuildNumber()
+                  facts.setParametersFromForm(
+                    params.branchName,
+                    params.repositoryUrl,
+                    params.manualVersion
+                  ).setEnvironments(
+                    env.JOB_BASE_NAME,
+                    env.BUILD_NUMBER,
+                    env.WORKSPACE,
+                    env.JENKINSFILE_SCRIPTS_DIR,
+                    env.GIT_CREDS_ID,
+                    env.APP_CONFIGURATION_JSON_PATH
+                  ).setDockerEnvironments(
+                    env.BASEIMAGE_SERVICES_ADMIN_CREDS_ID,
+                    readJSON(text: env.PUBLISH_REPOSITORIES)
+                  ).createVersionWithBuildNumber()
 
-              // Git clone repository with code to build
-              checkout([
-                $class: 'GitSCM',
-                branches: [
-                  [ name: branchName ]
-                ],
-                userRemoteConfigs: [
-                  [
-                    url: facts.repositoryUrl,
-                    credentialsId: facts.gitCredentialId
-                  ]
-                ]
-              ])
+                  // Git clone repository with code to build
+                  checkout([
+                    $class: 'GitSCM',
+                    branches: [
+                      [ name: branchName ]
+                    ],
+                    userRemoteConfigs: [
+                      [
+                        url: facts.repositoryUrl,
+                        credentialsId: facts.gitCredentialId
+                      ]
+                    ]
+                  ])
 
-              // Git clone repository with scripts to jenkinsfile
-              checkout([
-                $class: 'GitSCM',
-                branches: scm.branches,
-                doGenerateSubmoduleConfigurations: scm.doGenerateSubmoduleConfigurations,
-                userRemoteConfigs: scm.userRemoteConfigs,
-                extensions: [
-                  [
-                    $class: 'RelativeTargetDirectory',
-                    relativeTargetDir: facts.jenkinsScriptDirectory
-                  ]
-                ],
-              ])
+                  // Git clone repository with scripts to jenkinsfile
+                  checkout([
+                    $class: 'GitSCM',
+                    branches: scm.branches,
+                    doGenerateSubmoduleConfigurations: scm.doGenerateSubmoduleConfigurations,
+                    userRemoteConfigs: scm.userRemoteConfigs,
+                    extensions: [
+                      [
+                        $class: 'RelativeTargetDirectory',
+                        relativeTargetDir: facts.jenkinsScriptDirectory
+                      ]
+                    ],
+                  ])
 
-              // Read application configuration in Json
-              facts.setApplicationConfiguration(readJSON(file: facts.applicationJsonFile))
-              currentBuild.displayName = "${facts.jobBuildNumber} - ${facts.branchName} - ${facts.versionWithBuildNumber}"
+                  // Read application configuration in Json
+                  facts.setApplicationConfiguration(readJSON(file: facts.applicationJsonFile))
+                  currentBuild.displayName = "${facts.jobBuildNumber} - ${facts.branchName} - ${facts.versionWithBuildNumber}"
+                }
+              }
             }
-          }
-        }
+      }
+    }
+  }
+}
         stage('Prebuild Scripts') {
           parallel {
             stage('Docker'){

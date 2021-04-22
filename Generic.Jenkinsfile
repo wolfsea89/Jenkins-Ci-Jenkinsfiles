@@ -153,41 +153,41 @@ pipeline {
             }
           }
         }
-      }
-      stage('Prebuild Scripts') {
-        parallel {
-          stage('Docker'){
-            options { skipDefaultCheckout() }
-            when{
-              expression {
-                facts.applicationConfiguration.DOCKER_PROJECTS ? true : false
+        stage('Prebuild Scripts') {
+          parallel {
+            stage('Docker'){
+              options { skipDefaultCheckout() }
+              when{
+                expression {
+                  facts.applicationConfiguration.DOCKER_PROJECTS ? true : false
+                }
+              }
+              steps{
+                script{
+                  def prebuild = new PrebuildScriptsDocker(this)
+                  prebuild.setApplications(facts.applicationConfiguration.DOCKER_PROJECTS)
+                  prebuild.setVersion(facts.versionWithBuildNumber)
+                  prebuild.setAdminsCredentials(facts.baseImagesAdminCredentialsInService)
+                  prebuild.setJenkinsJobInfo(facts.jobName, facts.jobBuildNumber)
+                  prebuild.execute()
+                }
               }
             }
-            steps{
-              script{
-                def prebuild = new PrebuildScriptsDocker(this)
-                prebuild.setApplications(facts.applicationConfiguration.DOCKER_PROJECTS)
-                prebuild.setVersion(facts.versionWithBuildNumber)
-                prebuild.setAdminsCredentials(facts.baseImagesAdminCredentialsInService)
-                prebuild.setJenkinsJobInfo(facts.jobName, facts.jobBuildNumber)
-                prebuild.execute()
+            stage('Dotnet Core'){
+              options { skipDefaultCheckout() }
+              when{
+                expression {
+                  facts.applicationConfiguration.DOTNET_CORE_PROJECTS ? true : false
+                }
               }
-            }
-          }
-          stage('Dotnet Core'){
-            options { skipDefaultCheckout() }
-            when{
-              expression {
-                facts.applicationConfiguration.DOTNET_CORE_PROJECTS ? true : false
-              }
-            }
-            steps{
-              script{
-                def prebuild = new DotnetAssemblyVersion(this)
-                prebuild.setApplications(facts.applicationConfiguration.DOTNET_CORE_PROJECTS)
-                prebuild.setVersion(facts.versionWithBuildNumber)
-                prebuild.setJenkinsJobInfo(facts.jobName, facts.jobBuildNumber)
-                prebuild.execute()
+              steps{
+                script{
+                  def prebuild = new DotnetAssemblyVersion(this)
+                  prebuild.setApplications(facts.applicationConfiguration.DOTNET_CORE_PROJECTS)
+                  prebuild.setVersion(facts.versionWithBuildNumber)
+                  prebuild.setJenkinsJobInfo(facts.jobName, facts.jobBuildNumber)
+                  prebuild.execute()
+                }
               }
             }
           }
