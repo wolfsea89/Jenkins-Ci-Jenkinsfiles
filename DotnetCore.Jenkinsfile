@@ -51,7 +51,8 @@ pipeline {
                 env.BINARY_DIRECTORY,
                 env.PUBLISH_DIRECTORY,
                 readJSON(text: env.DOTNET_CORE_RUNTIMES),
-                env.DOTNET_CORE_TEST_RESULTS_DIRECTORY
+                env.DOTNET_CORE_TEST_RESULTS_DIRECTORY,
+                env.DOTNET_CORE_DISABLE_UNIT_TEST
               ).createVersionWithBuildNumber()
 
               // Git clone repository with code to build
@@ -200,12 +201,17 @@ pipeline {
                   }
                   steps{
                     script{
-                      def unitTests = new DotnetUnitTests(this)
-                      unitTests.setSolutions(facts.applicationConfiguration.DOTNET_CORE_SOLUTIONS)
-                      unitTests.setProjects(facts.applicationConfiguration.DOTNET_CORE_PROJECTS)
-                      unitTests.setResultsDirectory(facts.dotnetCoreTestResultsDirectory)
-                      unitTests.setParameters('--verbosity normal --logger "trx" --collect "Code Coverage"')
-                      unitTests.runUnitTest()
+                      def dotnetCoreDisableUnitTest = facts.dotnetCoreDisableTest ? true : false
+                      if(!dotnetCoreDisableUnitTest){
+                        def unitTests = new DotnetUnitTests(this)
+                        unitTests.setSolutions(facts.applicationConfiguration.DOTNET_CORE_SOLUTIONS)
+                        unitTests.setProjects(facts.applicationConfiguration.DOTNET_CORE_PROJECTS)
+                        unitTests.setResultsDirectory(facts.dotnetCoreTestResultsDirectory)
+                        unitTests.setParameters('--verbosity normal --logger "trx" --collect "Code Coverage"')
+                        unitTests.runUnitTest()
+                      } else {
+                        unstable('WARNING: Disabled Unit Test')
+                      }
                     }
                   }
                 }
