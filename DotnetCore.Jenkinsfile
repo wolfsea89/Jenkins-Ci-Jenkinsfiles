@@ -210,7 +210,7 @@ pipeline {
                         unitTests.setSolutions(facts.applicationConfiguration.DOTNET_CORE_SOLUTIONS)
                         unitTests.setProjects(facts.applicationConfiguration.DOTNET_CORE_PROJECTS)
                         unitTests.setResultsDirectory(facts.dotnetCoreTestResultsDirectory)
-                        unitTests.setParameters('--verbosity normal --logger "trx" --collect:"XPlat Code Coverage" /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura')
+                        unitTests.setParameters('--verbosity normal --logger "trx" --collect:"XPlat Code Coverage" "tests/UnitTests/bin/Debug/net5.0/UnitTests.dll"')
                         unitTests.runUnitTest()
                       } else {
                         unstable('WARNING: Disabled Unit Test')
