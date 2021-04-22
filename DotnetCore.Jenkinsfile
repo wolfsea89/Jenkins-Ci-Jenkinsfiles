@@ -22,7 +22,9 @@ pipeline {
     DOTNET_CORE_TEST_RESULTS_DIRECTORY = "TestResults"
     DOTNET_CORE_DISABLE_UNIT_TEST = 'false'
   }
-  agent none
+  agent {
+    label 'slave_ci_build_dotnet_core'
+  }
   options {
     skipDefaultCheckout true
   }

@@ -25,11 +25,8 @@ pipeline {
   //   DOCKER_REPOSITORY_RELEASE_NAME = 'wolfsea89/${projectName}'
   //   PUBLISH_REPOSITORIES = <<JSON>>
   // }
-    agent {
-      label 'slave_ci_build_docker'
-    }
-  options {
-    skipDefaultCheckout true
+  agent {
+    label 'slave_ci_build_docker'
   }
   stages{
     stage('Continuous Integration') {
