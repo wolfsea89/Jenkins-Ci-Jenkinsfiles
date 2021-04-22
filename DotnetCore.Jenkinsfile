@@ -204,7 +204,7 @@ pipeline {
                       unitTests.setSolutions(facts.applicationConfiguration.DOTNET_CORE_SOLUTIONS)
                       unitTests.setProjects(facts.applicationConfiguration.DOTNET_CORE_PROJECTS)
                       unitTests.setResultsDirectory(facts.dotnetCoreTestResultsDirectory)
-                      unitTests.setParameters("--verbosity normal --logger \"trx\" --collect:\"Code Coverage\"")
+                      unitTests.setParameters('--verbosity normal --logger "trx" --collect "Code Coverage"')
                       unitTests.runUnitTest()
                     }
                   }

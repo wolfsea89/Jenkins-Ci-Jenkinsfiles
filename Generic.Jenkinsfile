@@ -177,7 +177,7 @@ pipeline {
                       buildProjects.setBinaryDirectory(facts.workspace + '/' + facts.binaryDirectory)
                       buildProjects.setPublishDirectory(facts.publishDirectory)
                       buildProjects.setRuntimes(facts.dotnetCoreRuntimes)
-                      buildProjects.setParameters("--configuration Release --verbosity normal")
+                      unitTests.setParameters('--verbosity normal --logger "trx" --collect "Code Coverage"')
                       buildProjects.buildProjects()
                     }
                   }
