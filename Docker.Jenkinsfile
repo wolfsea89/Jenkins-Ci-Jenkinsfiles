@@ -124,6 +124,7 @@ pipeline {
           }
         }
         stage('Publish') {
+          options { skipDefaultCheckout() }
           parallel {
             stage('Release Artefact'){
               when{
@@ -162,6 +163,19 @@ pipeline {
                       publishDocker.setVersion(facts.versionWithBuildNumber)
                       publishDocker.publish(repository.repositoryUrl, repository.repositoryName, repository.repositoryCredentialID)
                     }
+                  }
+                }
+              }
+              post{
+                always{
+                  script{
+                    def repository = facts.publishRepositories
+                    def publishDocker = new DockerPublish(this)
+                    publishDocker.setApplications(facts.applicationConfiguration.DOCKER_PROJECTS)
+                    publishDocker.setVersion(facts.versionWithBuildNumber)
+                    publishDocker.clean()
+                    publishDocker.clean(repository.DockerHubRelease.repositoryName)
+                    publishDocker.clean(repository.GitHubRelease.repositoryName)
                   }
                 }
               }
