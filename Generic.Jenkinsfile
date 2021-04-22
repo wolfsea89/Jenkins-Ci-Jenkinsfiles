@@ -212,7 +212,7 @@ pipeline {
                     }
                   }
                 }
-                stage('Empty'){
+                stage('Empty2'){
                   when{
                     expression {
                       facts.applicationConfiguration.DOTNET_CORE_PROJECTS ? true : false
