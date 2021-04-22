@@ -91,6 +91,7 @@ pipeline {
           }
         }
         stage('Prebuild Scripts') {
+          options { skipDefaultCheckout() }
           parallel {
             stage('Dotnet Core'){
               when{
@@ -111,6 +112,7 @@ pipeline {
           }
         }
         stage('Build'){
+          options { skipDefaultCheckout() }
           parallel {
             stage('Dotnet Core'){
               stages{
@@ -152,6 +154,7 @@ pipeline {
           }
         }
         stage('Create Artefact and Tests'){
+          options { skipDefaultCheckout() }
           parallel {
             stage('Artefact'){
               stages{
@@ -166,7 +169,7 @@ pipeline {
                       def buildSolutions = new DotnetBuildSolutions(this)
                       buildSolutions.setSolutions(facts.applicationConfiguration.DOTNET_CORE_SOLUTIONS)
                       buildSolutions.setParameters("--configuration Release --verbosity normal")
-                      buildSolutions.buildSolutions()
+                      // buildSolutions.buildSolutions()
                     }
                   }
                 }
@@ -184,7 +187,7 @@ pipeline {
                       buildProjects.setPublishDirectory(facts.publishDirectory)
                       buildProjects.setRuntimes(facts.dotnetCoreRuntimes)
                       buildProjects.setParameters("--configuration Release --verbosity normal")
-                      buildProjects.buildProjects()
+                      // buildProjects.buildProjects()
                     }
                   }
                 }
