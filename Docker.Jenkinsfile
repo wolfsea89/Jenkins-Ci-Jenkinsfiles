@@ -91,6 +91,9 @@ pipeline {
           }
         }
         stage('Prebuild Scripts') {
+          agent {
+            label 'slave_ci_build_docker'
+          }
           options { skipDefaultCheckout() }
           when{
             expression {
