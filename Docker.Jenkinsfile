@@ -25,7 +25,9 @@ pipeline {
   //   DOCKER_REPOSITORY_RELEASE_NAME = 'wolfsea89/${projectName}'
   //   PUBLISH_REPOSITORIES = <<JSON>>
   // }
-  agent any
+    agent {
+      label 'slave_ci_build_docker'
+    }
   options {
     skipDefaultCheckout true
   }
@@ -33,9 +35,6 @@ pipeline {
     stage('Continuous Integration') {
       stages {
         stage('Preparing to work') {
-          agent {
-            label 'slave_ci_build_docker'
-          }
           steps {
             script {
               deleteDir()
