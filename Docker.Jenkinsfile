@@ -25,7 +25,7 @@ pipeline {
   //   DOCKER_REPOSITORY_RELEASE_NAME = 'wolfsea89/${projectName}'
   //   PUBLISH_REPOSITORIES = <<JSON>>
   // }
-  agent none
+  agent any
   options {
     skipDefaultCheckout true
   }
