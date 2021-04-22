@@ -109,21 +109,18 @@ pipeline {
           }
         }
         stage('Build'){
-          parallel {
-            stage('Docker'){
-              when{
-                expression {
-                  facts.applicationConfiguration.DOCKER_PROJECTS ? true : false
-                }
-              }
-              steps{
-                script{
-                  def buildDocker = new DockerBuild(this)
-                  buildDocker.setApplications(facts.applicationConfiguration.DOCKER_PROJECTS)
-                  buildDocker.setVersion(facts.versionWithBuildNumber)
-                  buildDocker.buildProjects()
-                }
-              }
+          options { skipDefaultCheckout() }
+          when{
+            expression {
+              facts.applicationConfiguration.DOCKER_PROJECTS ? true : false
+            }
+          }
+          steps{
+            script{
+              def buildDocker = new DockerBuild(this)
+              buildDocker.setApplications(facts.applicationConfiguration.DOCKER_PROJECTS)
+              buildDocker.setVersion(facts.versionWithBuildNumber)
+              buildDocker.buildProjects()
             }
           }
         }
