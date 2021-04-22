@@ -109,12 +109,12 @@ pipeline {
                     env.JENKINSFILE_SCRIPTS_DIR,
                     env.GIT_CREDS_ID,
                     env.APP_CONFIGURATION_JSON_PATH
-                  ).setDotnetEnvironments(
-                    env.BINARY_DIRECTORY,
-                    env.PUBLISH_DIRECTORY,
-                    readJSON(text: env.DOTNET_CORE_RUNTIMES),
-                    env.DOTNET_CORE_TEST_RESULTS_DIRECTORY,
-                    "${env.DOTNET_CORE_DISABLE_UNIT_TEST}"
+                  // ).setDotnetEnvironments(
+                  //   env.BINARY_DIRECTORY,
+                  //   env.PUBLISH_DIRECTORY,
+                  //   readJSON(text: env.DOTNET_CORE_RUNTIMES),
+                  //   env.DOTNET_CORE_TEST_RESULTS_DIRECTORY,
+                  //   "${env.DOTNET_CORE_DISABLE_UNIT_TEST}"
                   ).createVersionWithBuildNumber()
 
                   // Git clone repository with code to build
