@@ -23,14 +23,137 @@ pipeline {
     DOTNET_CORE_TEST_RESULTS_DIRECTORY = "TestResults"
     DOTNET_CORE_DISABLE_UNIT_TEST = 'false'
   }
-  agent {
-    label 'slave_ci_build_dotnet_core'
-  }
+ agent none
   options {
     skipDefaultCheckout true
   }
   stages{
     stage('Continuous Integration') {
+      stages {
+        stage('Preparing to work') {
+          parallel {
+            stage('Docker'){
+              agent {
+                label 'slave_ci_build_docker'
+              }
+              steps{
+                script {
+                  deleteDir()
+
+                  facts.setParametersFromForm(
+                    params.branchName,
+                    params.repositoryUrl,
+                    params.manualVersion
+                  ).setEnvironments(
+                    env.JOB_BASE_NAME,
+                    env.BUILD_NUMBER,
+                    env.WORKSPACE,
+                    env.JENKINSFILE_SCRIPTS_DIR,
+                    env.GIT_CREDS_ID,
+                    env.APP_CONFIGURATION_JSON_PATH
+                  ).setDockerEnvironments(
+                    env.BASEIMAGE_SERVICES_ADMIN_CREDS_ID,
+                    readJSON(text: env.PUBLISH_REPOSITORIES)
+                  ).createVersionWithBuildNumber()
+
+                  // Git clone repository with code to build
+                  checkout([
+                    $class: 'GitSCM',
+                    branches: [
+                      [ name: branchName ]
+                    ],
+                    userRemoteConfigs: [
+                      [
+                        url: facts.repositoryUrl,
+                        credentialsId: facts.gitCredentialId
+                      ]
+                    ]
+                  ])
+
+                  // Git clone repository with scripts to jenkinsfile
+                  checkout([
+                    $class: 'GitSCM',
+                    branches: scm.branches,
+                    doGenerateSubmoduleConfigurations: scm.doGenerateSubmoduleConfigurations,
+                    userRemoteConfigs: scm.userRemoteConfigs,
+                    extensions: [
+                      [
+                        $class: 'RelativeTargetDirectory',
+                        relativeTargetDir: facts.jenkinsScriptDirectory
+                      ]
+                    ],
+                  ])
+
+                  // Read application configuration in Json
+                  facts.setApplicationConfiguration(readJSON(file: facts.applicationJsonFile))
+                  currentBuild.displayName = "${facts.jobBuildNumber} - ${facts.branchName} - ${facts.versionWithBuildNumber}"
+                }
+              }
+            }
+            stage('Dotnet Core'){
+              agent {
+                label 'slave_ci_build_dotnet_core'
+              }
+              steps{
+                script {
+                  deleteDir()
+
+                  facts.setParametersFromForm(
+                    params.branchName,
+                    params.repositoryUrl,
+                    params.manualVersion
+                  ).setEnvironments(
+                    env.JOB_BASE_NAME,
+                    env.BUILD_NUMBER,
+                    env.WORKSPACE,
+                    env.JENKINSFILE_SCRIPTS_DIR,
+                    env.GIT_CREDS_ID,
+                    env.APP_CONFIGURATION_JSON_PATH
+                  ).setDotnetEnvironments(
+                    env.BINARY_DIRECTORY,
+                    env.PUBLISH_DIRECTORY,
+                    readJSON(text: env.DOTNET_CORE_RUNTIMES),
+                    env.DOTNET_CORE_TEST_RESULTS_DIRECTORY,
+                    "${env.DOTNET_CORE_DISABLE_UNIT_TEST}"
+                  ).createVersionWithBuildNumber()
+
+                  // Git clone repository with code to build
+                  checkout([
+                    $class: 'GitSCM',
+                    branches: [
+                      [ name: branchName ]
+                    ],
+                    userRemoteConfigs: [
+                      [
+                        url: facts.repositoryUrl,
+                        credentialsId: facts.gitCredentialId
+                      ]
+                    ]
+                  ])
+
+                  // Git clone repository with scripts to jenkinsfile
+                  checkout([
+                    $class: 'GitSCM',
+                    branches: scm.branches,
+                    doGenerateSubmoduleConfigurations: scm.doGenerateSubmoduleConfigurations,
+                    userRemoteConfigs: scm.userRemoteConfigs,
+                    extensions: [
+                      [
+                        $class: 'RelativeTargetDirectory',
+                        relativeTargetDir: facts.jenkinsScriptDirectory
+                      ]
+                    ],
+                  ])
+
+                  // Read application configuration in Json
+                  facts.setApplicationConfiguration(readJSON(file: facts.applicationJsonFile))
+                  currentBuild.displayName = "${facts.jobBuildNumber} - ${facts.branchName} - ${facts.versionWithBuildNumber}"
+                }
+              }
+            }
+          }
+        }
+      }
       stages {
         stage('Preparing to work') {
           steps {

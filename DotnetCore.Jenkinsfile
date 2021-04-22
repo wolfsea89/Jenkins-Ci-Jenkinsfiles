@@ -28,9 +28,6 @@ pipeline {
   }
   stages{
     stage('Continuous Integration') {
-      agent {
-        label 'slave_ci_build_dotnet_core'
-      }
       stages {
         stage('Preparing to work') {
           steps {
@@ -212,8 +209,6 @@ pipeline {
                         unitTests.setResultsDirectory(facts.dotnetCoreTestResultsDirectory)
                         unitTests.setParameters('--verbosity:normal --logger:"trx" --collect:"XPlat Code Coverage"')
                         unitTests.runUnitTest()
-
-                        cobertura coberturaReportFile: 'TestResults/**/*.xml'
                       } else {
                         unstable('WARNING: Disabled Unit Test')
                       }
