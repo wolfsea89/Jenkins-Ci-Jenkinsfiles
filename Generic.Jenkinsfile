@@ -154,110 +154,49 @@ pipeline {
           }
         }
       }
+      stage('Prebuild Scripts') {
+        parallel {
+          stage('Docker'){
+            options { skipDefaultCheckout() }
+            when{
+              expression {
+                facts.applicationConfiguration.DOCKER_PROJECTS ? true : false
+              }
+            }
+            steps{
+              script{
+                def prebuild = new PrebuildScriptsDocker(this)
+                prebuild.setApplications(facts.applicationConfiguration.DOCKER_PROJECTS)
+                prebuild.setVersion(facts.versionWithBuildNumber)
+                prebuild.setAdminsCredentials(facts.baseImagesAdminCredentialsInService)
+                prebuild.setJenkinsJobInfo(facts.jobName, facts.jobBuildNumber)
+                prebuild.execute()
+              }
+            }
+          }
+          stage('Dotnet Core'){
+            options { skipDefaultCheckout() }
+            when{
+              expression {
+                facts.applicationConfiguration.DOTNET_CORE_PROJECTS ? true : false
+              }
+            }
+            steps{
+              script{
+                def prebuild = new DotnetAssemblyVersion(this)
+                prebuild.setApplications(facts.applicationConfiguration.DOTNET_CORE_PROJECTS)
+                prebuild.setVersion(facts.versionWithBuildNumber)
+                prebuild.setJenkinsJobInfo(facts.jobName, facts.jobBuildNumber)
+                prebuild.execute()
+              }
+            }
+          }
+        }
+      }
     }
   }
 }
-//       }
-//       stages {
-//         stage('Preparing to work') {
-//           steps {
-//             script {
-//               deleteDir()
 
-//               facts.setParametersFromForm(
-//                 params.branchName,
-//                 params.repositoryUrl,
-//                 params.manualVersion
-//               ).setEnvironments(
-//                 env.JOB_BASE_NAME,
-//                 env.BUILD_NUMBER,
-//                 env.WORKSPACE,
-//                 env.JENKINSFILE_SCRIPTS_DIR,
-//                 env.GIT_CREDS_ID,
-//                 env.APP_CONFIGURATION_JSON_PATH
-//               ).setDockerEnvironments(
-//                 env.BASEIMAGE_SERVICES_ADMIN_CREDS_ID,
-//                 readJSON(text: env.PUBLISH_REPOSITORIES)
-//               ).setDotnetEnvironments(
-//                 env.BINARY_DIRECTORY,
-//                 env.PUBLISH_DIRECTORY,
-//                 readJSON(text: env.DOTNET_CORE_RUNTIMES),
-//                 env.DOTNET_CORE_TEST_RESULTS_DIRECTORY,
-//                 "${env.DOTNET_CORE_DISABLE_UNIT_TEST}"
-//               ).createVersionWithBuildNumber()
-
-//               // Git clone repository with code to build
-//               checkout([
-//                 $class: 'GitSCM',
-//                 branches: [
-//                   [ name: branchName ]
-//                 ],
-//                 userRemoteConfigs: [
-//                   [
-//                     url: facts.repositoryUrl,
-//                     credentialsId: facts.gitCredentialId
-//                   ]
-//                 ]
-//               ])
-
-//               // Git clone repository with scripts to jenkinsfile
-//               checkout([
-//                 $class: 'GitSCM',
-//                 branches: scm.branches,
-//                 doGenerateSubmoduleConfigurations: scm.doGenerateSubmoduleConfigurations,
-//                 userRemoteConfigs: scm.userRemoteConfigs,
-//                 extensions: [
-//                   [
-//                     $class: 'RelativeTargetDirectory',
-//                     relativeTargetDir: facts.jenkinsScriptDirectory
-//                   ]
-//                 ],
-//               ])
-
-//               // Read application configuration in Json
-//               facts.setApplicationConfiguration(readJSON(file: facts.applicationJsonFile))
-//               currentBuild.displayName = "${facts.jobBuildNumber} - ${facts.branchName} - ${facts.versionWithBuildNumber}"
-//             }
-//           }
-//         }
-//         stage('Prebuild Scripts') {
-//           options { skipDefaultCheckout() }
-//           parallel {
-//             stage('Docker'){
-//               when{
-//                 expression {
-//                   facts.applicationConfiguration.DOCKER_PROJECTS ? true : false
-//                 }
-//               }
-//               steps{
-//                 script{
-//                   def prebuild = new PrebuildScriptsDocker(this)
-//                   prebuild.setApplications(facts.applicationConfiguration.DOCKER_PROJECTS)
-//                   prebuild.setVersion(facts.versionWithBuildNumber)
-//                   prebuild.setAdminsCredentials(facts.baseImagesAdminCredentialsInService)
-//                   prebuild.setJenkinsJobInfo(facts.jobName, facts.jobBuildNumber)
-//                   prebuild.execute()
-//                 }
-//               }
-//             }
-//             stage('Dotnet Core'){
-//               when{
-//                 expression {
-//                   facts.applicationConfiguration.DOTNET_CORE_PROJECTS ? true : false
-//                 }
-//               }
-//               steps{
-//                 script{
-//                   def prebuild = new DotnetAssemblyVersion(this)
-//                   prebuild.setApplications(facts.applicationConfiguration.DOTNET_CORE_PROJECTS)
-//                   prebuild.setVersion(facts.versionWithBuildNumber)
-//                   prebuild.setJenkinsJobInfo(facts.jobName, facts.jobBuildNumber)
-//                   prebuild.execute()
-//                 }
-//               }
-//             }
-//           }
-//         }
 //         stage('Build'){
 //           options { skipDefaultCheckout() }
 //           parallel {
