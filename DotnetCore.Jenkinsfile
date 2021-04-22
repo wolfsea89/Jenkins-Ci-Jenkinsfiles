@@ -25,9 +25,6 @@ pipeline {
   agent {
     label 'slave_ci_build_dotnet_core'
   }
-  options {
-    skipDefaultCheckout true
-  }
   stages{
     stage('Continuous Integration') {
       stages {
@@ -91,22 +88,18 @@ pipeline {
         }
         stage('Prebuild Scripts') {
           options { skipDefaultCheckout() }
-          parallel {
-            stage('Dotnet Core'){
-              when{
-                expression {
-                  facts.applicationConfiguration.DOTNET_CORE_PROJECTS ? true : false
-                }
-              }
-              steps{
-                script{
-                  def prebuild = new DotnetAssemblyVersion(this)
-                  prebuild.setApplications(facts.applicationConfiguration.DOTNET_CORE_PROJECTS)
-                  prebuild.setVersion(facts.versionWithBuildNumber)
-                  prebuild.setJenkinsJobInfo(facts.jobName, facts.jobBuildNumber)
-                  prebuild.execute()
-                }
-              }
+          when{
+            expression {
+              facts.applicationConfiguration.DOTNET_CORE_PROJECTS ? true : false
+            }
+          }
+          steps{
+            script{
+              def prebuild = new DotnetAssemblyVersion(this)
+              prebuild.setApplications(facts.applicationConfiguration.DOTNET_CORE_PROJECTS)
+              prebuild.setVersion(facts.versionWithBuildNumber)
+              prebuild.setJenkinsJobInfo(facts.jobName, facts.jobBuildNumber)
+              prebuild.execute()
             }
           }
         }
