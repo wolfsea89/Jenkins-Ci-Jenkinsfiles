@@ -202,8 +202,7 @@ pipeline {
                   }
                   steps{
                     script{
-                      def dotnetCoreDisableUnitTest = facts.dotnetCoreDisableTest ? true : false
-                      if(!dotnetCoreDisableUnitTest){
+                      if(facts.dotnetCoreDisableTest == false){
                         def unitTests = new DotnetUnitTests(this)
                         unitTests.setSolutions(facts.applicationConfiguration.DOTNET_CORE_SOLUTIONS)
                         unitTests.setProjects(facts.applicationConfiguration.DOTNET_CORE_PROJECTS)
