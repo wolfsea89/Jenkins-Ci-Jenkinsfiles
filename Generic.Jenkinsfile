@@ -36,11 +36,6 @@ pipeline {
               agent {
                 label 'slave_ci_build_docker'
               }
-              when{
-                expression {
-                  facts.applicationConfiguration.DOCKER_PROJECTS ? true : false
-                }
-              }
               steps{
                 script {
                   deleteDir()
@@ -98,13 +93,6 @@ pipeline {
             stage('Dotnet Core'){
               agent {
                 label 'slave_ci_build_dotnet_core'
-              }
-              when{
-                expression {
-                  def solutionsExist = facts.applicationConfiguration.DOTNET_CORE_SOLUTIONS ? true : false
-                  def dotnetCoreProjectsExist = facts.applicationConfiguration.DOTNET_CORE_PROJECTS ? true : false
-                  (solutionsExist || dotnetCoreProjectsExist) ? true : false
-                }
               }
               steps{
                 script {
