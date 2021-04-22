@@ -147,7 +147,7 @@ pipeline {
                 }
               }
             }
-            stage('Dotnet Core'){
+            stage('.Net Core'){
               stages{
                 stage('Build Solution'){
                   when{
