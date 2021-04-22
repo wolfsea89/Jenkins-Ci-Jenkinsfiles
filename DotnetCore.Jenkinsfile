@@ -108,7 +108,7 @@ pipeline {
           parallel {
             stage('Core'){
               stages{
-                stage('Build Solution'){
+                stage('Solution .net Core'){
                   when{
                     expression {
                       facts.applicationConfiguration.DOTNET_CORE_SOLUTIONS ? true : false
@@ -123,7 +123,7 @@ pipeline {
                     }
                   }
                 }
-                stage('Build Projects'){
+                stage('Projects .net Core'){
                   when{
                     expression {
                       facts.applicationConfiguration.DOTNET_CORE_PROJECTS ? true : false
@@ -141,7 +141,7 @@ pipeline {
                     }
                   }
                 }
-                stage('Unit Test'){
+                stage('Unit Test .net Core'){
                   when{
                     expression {
                       def solutionsExist = facts.applicationConfiguration.DOTNET_CORE_SOLUTIONS ? true : false
@@ -168,7 +168,7 @@ pipeline {
             }
             stage('Framework'){
               stages{
-                stage('Build Solution'){
+                stage('Build Solution .net Framework'){
                   when{
                     expression {
                       facts.applicationConfiguration.DOTNET_FRAMEWORK_SOLUTIONS ? true : false
@@ -183,7 +183,7 @@ pipeline {
                     }
                   }
                 }
-                stage('Build Projects'){
+                stage('Build Projects .net Framework'){
                   when{
                     expression {
                       facts.applicationConfiguration.DOTNET_FRAMEWORK_PROJECTS ? true : false
@@ -201,7 +201,7 @@ pipeline {
                     }
                   }
                 }
-                stage('Unit Test'){
+                stage('Unit Test .net Framework'){
                   when{
                     expression {
                       def solutionsExist = facts.applicationConfiguration.DOTNET_FRAMEWORK_SOLUTIONS ? true : false
