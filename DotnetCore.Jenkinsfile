@@ -20,6 +20,7 @@ pipeline {
     PUBLISH_DIRECTORY = 'p'
     DOTNET_CORE_RUNTIMES = '[ "linux-x64", "win-x64" ]'
     DOTNET_CORE_TEST_RESULTS_DIRECTORY = "TestResults"
+    DOTNET_CORE_DISABLE_UNIT_TEST = 'false'
   }
   agent {
     label 'slave_ci_build_dotnet_core'
@@ -50,7 +51,8 @@ pipeline {
                 env.BINARY_DIRECTORY,
                 env.PUBLISH_DIRECTORY,
                 readJSON(text: env.DOTNET_CORE_RUNTIMES),
-                env.DOTNET_CORE_TEST_RESULTS_DIRECTORY
+                env.DOTNET_CORE_TEST_RESULTS_DIRECTORY,
+                "${env.DOTNET_CORE_DISABLE_UNIT_TEST}"
               ).createVersionWithBuildNumber()
 
               // Git clone repository with code to build
