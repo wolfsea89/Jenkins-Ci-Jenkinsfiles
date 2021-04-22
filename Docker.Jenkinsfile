@@ -25,15 +25,11 @@ pipeline {
   //   DOCKER_REPOSITORY_RELEASE_NAME = 'wolfsea89/${projectName}'
   //   PUBLISH_REPOSITORIES = <<JSON>>
   // }
-  agent none
-  options {
-    skipDefaultCheckout true
+  agent {
+    label 'slave_ci_build_docker'
   }
   stages{
     stage('Continuous Integration') {
-      agent {
-        label 'slave_ci_build_docker'
-      }
       stages {
         stage('Preparing to work') {
           steps {
@@ -91,46 +87,41 @@ pipeline {
           }
         }
         stage('Prebuild Scripts') {
-          parallel {
-            stage('Docker'){
-              when{
-                expression {
-                  facts.applicationConfiguration.DOCKER_PROJECTS ? true : false
-                }
-              }
-              steps{
-                script{
-                  def prebuild = new PrebuildScriptsDocker(this)
-                  prebuild.setApplications(facts.applicationConfiguration.DOCKER_PROJECTS)
-                  prebuild.setVersion(facts.versionWithBuildNumber)
-                  prebuild.setAdminsCredentials(facts.baseImagesAdminCredentialsInService)
-                  prebuild.setJenkinsJobInfo(facts.jobName, facts.jobBuildNumber)
-                  prebuild.execute()
-                }
-              }
+          options { skipDefaultCheckout() }
+          when{
+            expression {
+              facts.applicationConfiguration.DOCKER_PROJECTS ? true : false
+            }
+          }
+          steps{
+            script{
+              def prebuild = new PrebuildScriptsDocker(this)
+              prebuild.setApplications(facts.applicationConfiguration.DOCKER_PROJECTS)
+              prebuild.setVersion(facts.versionWithBuildNumber)
+              prebuild.setAdminsCredentials(facts.baseImagesAdminCredentialsInService)
+              prebuild.setJenkinsJobInfo(facts.jobName, facts.jobBuildNumber)
+              prebuild.execute()
             }
           }
         }
         stage('Build'){
-          parallel {
-            stage('Docker'){
-              when{
-                expression {
-                  facts.applicationConfiguration.DOCKER_PROJECTS ? true : false
-                }
-              }
-              steps{
-                script{
-                  def buildDocker = new DockerBuild(this)
-                  buildDocker.setApplications(facts.applicationConfiguration.DOCKER_PROJECTS)
-                  buildDocker.setVersion(facts.versionWithBuildNumber)
-                  buildDocker.buildProjects()
-                }
-              }
+          options { skipDefaultCheckout() }
+          when{
+            expression {
+              facts.applicationConfiguration.DOCKER_PROJECTS ? true : false
+            }
+          }
+          steps{
+            script{
+              def buildDocker = new DockerBuild(this)
+              buildDocker.setApplications(facts.applicationConfiguration.DOCKER_PROJECTS)
+              buildDocker.setVersion(facts.versionWithBuildNumber)
+              buildDocker.buildProjects()
             }
           }
         }
         stage('Publish') {
+          options { skipDefaultCheckout() }
           parallel {
             stage('Release Artefact'){
               when{
@@ -198,20 +189,6 @@ pipeline {
                 }
               }
             }
-          }
-        }
-      }
-      post{
-        always{
-          script{
-            def repository = facts.publishRepositories
-            def publishDocker = new DockerPublish(this)
-            publishDocker.setApplications(facts.applicationConfiguration.DOCKER_PROJECTS)
-            publishDocker.setVersion(facts.versionWithBuildNumber)
-            publishDocker.clean()
-            publishDocker.clean(repository.DockerHubRelease.repositoryName)
-            publishDocker.clean(repository.DockerHubSnapshot.repositoryName)
-            publishDocker.clean(repository.GitHubRelease.repositoryName)
           }
         }
       }
