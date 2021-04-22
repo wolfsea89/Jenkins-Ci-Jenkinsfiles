@@ -155,6 +155,7 @@ pipeline {
                   steps{
                     script{
                       def repository = facts.publishRepositories.GitHubRelease
+                      println(repository)
                       def publishDocker = new DockerPublish(this)
                       publishDocker.setApplications(facts.applicationConfiguration.DOCKER_PROJECTS)
                       publishDocker.setVersion(facts.versionWithBuildNumber)
