@@ -31,11 +31,11 @@ pipeline {
   }
   stages{
     stage('Continuous Integration') {
-      agent {
-        label 'slave_ci_build_docker'
-      }
       stages {
         stage('Preparing to work') {
+          agent {
+            label 'slave_ci_build_docker'
+          }
           steps {
             script {
               deleteDir()
@@ -91,23 +91,20 @@ pipeline {
           }
         }
         stage('Prebuild Scripts') {
-          parallel {
-            stage('Docker'){
-              when{
-                expression {
-                  facts.applicationConfiguration.DOCKER_PROJECTS ? true : false
-                }
-              }
-              steps{
-                script{
-                  def prebuild = new PrebuildScriptsDocker(this)
-                  prebuild.setApplications(facts.applicationConfiguration.DOCKER_PROJECTS)
-                  prebuild.setVersion(facts.versionWithBuildNumber)
-                  prebuild.setAdminsCredentials(facts.baseImagesAdminCredentialsInService)
-                  prebuild.setJenkinsJobInfo(facts.jobName, facts.jobBuildNumber)
-                  prebuild.execute()
-                }
-              }
+          options { skipDefaultCheckout() }
+          when{
+            expression {
+              facts.applicationConfiguration.DOCKER_PROJECTS ? true : false
+            }
+          }
+          steps{
+            script{
+              def prebuild = new PrebuildScriptsDocker(this)
+              prebuild.setApplications(facts.applicationConfiguration.DOCKER_PROJECTS)
+              prebuild.setVersion(facts.versionWithBuildNumber)
+              prebuild.setAdminsCredentials(facts.baseImagesAdminCredentialsInService)
+              prebuild.setJenkinsJobInfo(facts.jobName, facts.jobBuildNumber)
+              prebuild.execute()
             }
           }
         }
