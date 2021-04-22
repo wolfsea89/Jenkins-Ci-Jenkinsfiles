@@ -55,7 +55,8 @@ pipeline {
                 env.BINARY_DIRECTORY,
                 env.PUBLISH_DIRECTORY,
                 readJSON(text: env.DOTNET_CORE_RUNTIMES),
-                env.DOTNET_CORE_TEST_RESULTS_DIRECTORY
+                env.DOTNET_CORE_TEST_RESULTS_DIRECTORY,
+                "${env.DOTNET_CORE_DISABLE_UNIT_TEST}"
               ).createVersionWithBuildNumber()
 
               // Git clone repository with code to build
@@ -196,7 +197,7 @@ pipeline {
           parallel {
             stage('Artefact'){
               stages{
-                stage('Build Solution'){
+                stage('Empty'){
                   when{
                     expression {
                       facts.applicationConfiguration.DOTNET_CORE_SOLUTIONS ? true : false
@@ -211,7 +212,7 @@ pipeline {
                     }
                   }
                 }
-                stage('Build Projects'){
+                stage('Empty'){
                   when{
                     expression {
                       facts.applicationConfiguration.DOTNET_CORE_PROJECTS ? true : false
