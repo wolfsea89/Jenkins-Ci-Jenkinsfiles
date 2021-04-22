@@ -133,17 +133,21 @@ pipeline {
           options { skipDefaultCheckout() }
           parallel {
             stage('Docker'){
-              when{
-                expression {
-                  facts.applicationConfiguration.DOCKER_PROJECTS ? true : false
-                }
-              }
-              steps{
-                script{
-                  def buildDocker = new DockerBuild(this)
-                  buildDocker.setApplications(facts.applicationConfiguration.DOCKER_PROJECTS)
-                  buildDocker.setVersion(facts.versionWithBuildNumber)
-                  buildDocker.buildProjects()
+              stages{
+                stage('Build Image'){
+                  when{
+                    expression {
+                      facts.applicationConfiguration.DOCKER_PROJECTS ? true : false
+                    }
+                  }
+                  steps{
+                    script{
+                      def buildDocker = new DockerBuild(this)
+                      buildDocker.setApplications(facts.applicationConfiguration.DOCKER_PROJECTS)
+                      buildDocker.setVersion(facts.versionWithBuildNumber)
+                      buildDocker.buildProjects()
+                    }
+                  }
                 }
               }
             }
