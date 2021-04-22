@@ -244,12 +244,16 @@ pipeline {
                   }
                   steps{
                     script{
-                      def unitTests = new DotnetUnitTests(this)
-                      unitTests.setSolutions(facts.applicationConfiguration.DOTNET_CORE_SOLUTIONS)
-                      unitTests.setProjects(facts.applicationConfiguration.DOTNET_CORE_PROJECTS)
-                      unitTests.setResultsDirectory(facts.dotnetCoreTestResultsDirectory)
-                      unitTests.setParameters('--verbosity normal --logger "trx" --collect:"XPlat Code Coverage"')
-                      unitTests.runUnitTest()
+                      if(facts.dotnetCoreDisableUnitTest == false){
+                        def unitTests = new DotnetUnitTests(this)
+                        unitTests.setSolutions(facts.applicationConfiguration.DOTNET_CORE_SOLUTIONS)
+                        unitTests.setProjects(facts.applicationConfiguration.DOTNET_CORE_PROJECTS)
+                        unitTests.setResultsDirectory(facts.dotnetCoreTestResultsDirectory)
+                        unitTests.setParameters('--verbosity normal --logger "trx" --collect:"XPlat Code Coverage"')
+                        unitTests.runUnitTest()
+                      } else {
+                        unstable('WARNING: Disabled Unit Test')
+                      }
                     }
                   }
                 }
