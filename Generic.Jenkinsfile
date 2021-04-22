@@ -21,7 +21,7 @@ pipeline {
     PUBLISH_DIRECTORY = 'p'
     DOTNET_CORE_RUNTIMES = '[ "linux-x64", "win-x64" ]'
     DOTNET_CORE_TEST_RESULTS_DIRECTORY = "TestResults"
-    DOTNET_CORE_DISABLE_UNIT_TEST = 'false'
+    DOTNET_CORE_DISABLE_UNIT_TEST = 'true'
   }
   agent {
     label 'slave_ci_build_dotnet_core'
