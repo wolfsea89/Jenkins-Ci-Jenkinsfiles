@@ -20,13 +20,15 @@ pipeline {
     PUBLISH_DIRECTORY = 'p'
     DOTNET_CORE_RUNTIMES = '[ "linux-x64", "win-x64" ]'
     DOTNET_CORE_TEST_RESULTS_DIRECTORY = "TestResults"
-    DOTNET_CORE_DISABLE_UNIT_TEST = 'false'
   }
   agent {
     label 'slave_ci_build_dotnet_core'
   }
   stages{
     stage('Continuous Integration') {
+      agent {
+        label 'slave_ci_build_dotnet_core'
+      }
       stages {
         stage('Preparing to work') {
           steps {
@@ -48,8 +50,7 @@ pipeline {
                 env.BINARY_DIRECTORY,
                 env.PUBLISH_DIRECTORY,
                 readJSON(text: env.DOTNET_CORE_RUNTIMES),
-                env.DOTNET_CORE_TEST_RESULTS_DIRECTORY,
-                "${env.DOTNET_CORE_DISABLE_UNIT_TEST}"
+                env.DOTNET_CORE_TEST_RESULTS_DIRECTORY
               ).createVersionWithBuildNumber()
 
               // Git clone repository with code to build
@@ -270,6 +271,74 @@ pipeline {
             }
           }
         }
+        stage('Create Artefact and Tests'){
+          parallel {
+            stage('Artefact'){
+              stages{
+                stage('Build Solution'){
+                  when{
+                    expression {
+                      facts.applicationConfiguration.DOTNET_CORE_SOLUTIONS ? true : false
+                    }
+                  }
+                  steps{
+                    script{
+                      def buildSolutions = new DotnetBuildSolutions(this)
+                      buildSolutions.setSolutions(facts.applicationConfiguration.DOTNET_CORE_SOLUTIONS)
+                      buildSolutions.setParameters("--configuration Release --verbosity normal")
+                      buildSolutions.buildSolutions()
+                    }
+                  }
+                }
+                stage('Build Projects'){
+                  when{
+                    expression {
+                      facts.applicationConfiguration.DOTNET_CORE_PROJECTS ? true : false
+                    }
+                  }
+                  steps{
+                    script{
+                      def buildProjects = new DotnetBuildProjects(this)
+                      buildProjects.setProjects(facts.applicationConfiguration.DOTNET_CORE_PROJECTS)
+                      buildProjects.setBinaryDirectory(facts.workspace + '/' + facts.binaryDirectory)
+                      buildProjects.setPublishDirectory(facts.publishDirectory)
+                      buildProjects.setRuntimes(facts.dotnetCoreRuntimes)
+                      buildProjects.setParameters("--configuration Release --verbosity normal")
+                      buildProjects.buildProjects()
+                    }
+                  }
+                }
+              }
+            }
+            stage('Unit Test'){
+              stages{
+                stage('Unit Test'){
+                  when{
+                    expression {
+                      def solutionsExist = facts.applicationConfiguration.DOTNET_CORE_SOLUTIONS ? true : false
+                      def dotnetCoreProjectsExist = facts.applicationConfiguration.DOTNET_CORE_PROJECTS ? true : false
+                      (solutionsExist || dotnetCoreProjectsExist) ? true : false
+                    }
+                  }
+                  steps{
+                    script{
+                      def unitTests = new DotnetUnitTests(this)
+                      unitTests.setSolutions(facts.applicationConfiguration.DOTNET_CORE_SOLUTIONS)
+                      unitTests.setProjects(facts.applicationConfiguration.DOTNET_CORE_PROJECTS)
+                      unitTests.setResultsDirectory(facts.dotnetCoreTestResultsDirectory)
+                      unitTests.setParameters("--verbosity normal --logger \"trx\" --collect:\"Code Coverage\"")
+                      unitTests.runUnitTest()
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
         // stage('Publish') {
         //   parallel {
         //     stage('DockerHub - Release'){
@@ -328,21 +397,21 @@ pipeline {
         //     }
         //   }
         // }
-      }
-      // post{
-      //   always{
-      //     script{
-      //       def repository = facts.publishRepositories
-      //       def publishDocker = new DockerPublish(this)
-      //       publishDocker.setApplications(facts.applicationConfiguration.DOTNET_CORE_PROJECTS)
-      //       publishDocker.setVersion(facts.versionWithBuildNumber)
-      //       publishDocker.clean()
-      //       publishDocker.clean(repository.DockerHubRelease.repositoryName)
-      //       publishDocker.clean(repository.DockerHubSnapshot.repositoryName)
-      //       publishDocker.clean(repository.GitHubRelease.repositoryName)
-      //     }
-      //   }
-      // }
-    }
-  }
-}
+//       }
+//       // post{
+//       //   always{
+//       //     script{
+//       //       def repository = facts.publishRepositories
+//       //       def publishDocker = new DockerPublish(this)
+//       //       publishDocker.setApplications(facts.applicationConfiguration.DOTNET_CORE_PROJECTS)
+//       //       publishDocker.setVersion(facts.versionWithBuildNumber)
+//       //       publishDocker.clean()
+//       //       publishDocker.clean(repository.DockerHubRelease.repositoryName)
+//       //       publishDocker.clean(repository.DockerHubSnapshot.repositoryName)
+//       //       publishDocker.clean(repository.GitHubRelease.repositoryName)
+//       //     }
+//       //   }
+//       // }
+//     }
+//   }
+// }
