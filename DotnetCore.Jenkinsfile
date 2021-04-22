@@ -106,7 +106,7 @@ pipeline {
         stage('Build'){
           options { skipDefaultCheckout() }
           parallel {
-            stage('Dotnet Core'){
+            stage('Core'){
               stages{
                 stage('Build Solution'){
                   when{
@@ -166,7 +166,7 @@ pipeline {
                 }
               }
             }
-            stage('Dotnet Framework'){
+            stage('Framework'){
               stages{
                 stage('Build Solution'){
                   when{
