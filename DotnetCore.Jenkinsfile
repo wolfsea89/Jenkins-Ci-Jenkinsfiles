@@ -161,6 +161,18 @@ pipeline {
                         unitTests.setResultsDirectory(facts.dotnetCoreTestResultsDirectory)
                         unitTests.setParameters('--verbosity:normal --logger:"trx" --collect:"XPlat Code Coverage"')
                         unitTests.runUnitTest()
+
+                        try{
+                          mstest testResultsFile:"${this.resultsDirectory}/*.trx", keepLongStdio: true
+                        } catch (Exception e){
+                          unstable("WARNING: No Unit test: ${unitTestProject.path}")
+                        }
+
+                        try{
+                          cobertura coberturaReportFile: "${this.resultsDirectory}/**/*.xml"
+                        } catch (Exception e){
+                          unstable("WARNING: Error read Code Coverage files")
+                        }
                       } else {
                         unstable('WARNING: Disabled Unit Test')
                       }
