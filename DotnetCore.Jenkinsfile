@@ -163,16 +163,12 @@ pipeline {
                         unitTests.runUnitTest()
 
                         try{
-                          mstest testResultsFile:"${this.resultsDirectory}/*.trx", keepLongStdio: true
+                          mstest testResultsFile:"${facts.dotnetCoreTestResultsDirectory}/*.trx", keepLongStdio: true
+                          cobertura coberturaReportFile: "${facts.dotnetCoreTestResultsDirectory}/**/*.xml"
                         } catch (Exception e){
-                          unstable("WARNING: No Unit test: ${unitTestProject.path}")
+                          unstable("WARNING: Error read Unit test files (*.trx) or Code Coverage")
                         }
 
-                        try{
-                          cobertura coberturaReportFile: "${this.resultsDirectory}/**/*.xml"
-                        } catch (Exception e){
-                          unstable("WARNING: Error read Code Coverage files")
-                        }
                       } else {
                         unstable('WARNING: Disabled Unit Test')
                       }
