@@ -164,7 +164,7 @@ pipeline {
 
                         try{
                           mstest testResultsFile:"${facts.dotnetCoreTestResultsDirectory}/*.trx", keepLongStdio: true
-                          cobertura coberturaReportFile: "${facts.dotnetCoreTestResultsDirectory}/**/**/**/*.xml"
+                          cobertura coberturaReportFile: "${facts.dotnetCoreTestResultsDirectory}/**/*.xml"
                         } catch (Exception e){
                           unstable("WARNING: Error read Unit test files (*.trx) or Code Coverage")
                         }
