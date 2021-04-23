@@ -155,7 +155,7 @@ pipeline {
                   steps{
                     script{
                       if(facts.dotnetCoreDisableUnitTest == false){
-                        def unitTests = new DotnetUnitTests(this)
+                        def unitTests = new DotnetUnitTestsRunner(this)
                         unitTests.setSolutions(facts.applicationConfiguration.DOTNET_CORE_SOLUTIONS)
                         unitTests.setProjects(facts.applicationConfiguration.DOTNET_CORE_PROJECTS)
                         unitTests.setResultsDirectory(facts.dotnetCoreTestResultsDirectory)
